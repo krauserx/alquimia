@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
     <!--*******************
         header start here
     ********************-->
@@ -7,7 +8,6 @@
     <!--*******************
         .header end here
     ********************-->
-
 
 <body>
 
@@ -37,10 +37,10 @@
         <div class="nav-header">
             <div class="brand-logo">
                 <a href="index.html">
-                    <b class="logo-abbr"><img src="{{ asset('images/logo.png')}}" alt=""> </b>
-                    <span class="logo-compact"><img src="{{ asset('./images/logo-compact.png')}}" alt=""></span>
+                    <b class="logo-abbr"><img src="images/logo.png" alt=""> </b>
+                    <span class="logo-compact"><img src="./images/logo-compact.png" alt=""></span>
                     <span class="brand-title">
-                        <img src="{{ asset('images/logo-text.png')}}" alt="">
+                        <img src="images/logo-text.png" alt="">
                     </span>
                 </a>
             </div>
@@ -52,45 +52,44 @@
         <!--**********************************
             Header start
         ***********************************-->
-        @include('partes.2_header')
+               @include('partes.2_header')
         <!--**********************************
-            .Header end ti-comment-alt
+            Header end ti-comment-alt
         ***********************************-->
 
         <!--**********************************
             Sidebar start
         ***********************************-->
-        @include('partes.3_side_bar')
+              @include('partes.3_side_bar')
         <!--**********************************
-            .Sidebar end
+            Sidebar end
         ***********************************-->
 
         <!--**********************************
             Content body start
         ***********************************-->
-        <div class="content-body">
-                <div class="row page-titles mx-0">
-                        <div class="col p-md-0">
-                                @yield('breadcrumb')
-                            <!--<ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                                <li class="breadcrumb-item active"><a href="javascript:void(0)">Home</a></li>
-                            </ol>-->
-                        </div>
-                    </div>
-                <!-- row -->
 
-            <div class="container-fluid">
-                @yield('content')
-            </div>
-              <!-- #/ container -->
-            <!-- #/ container -->
-        </div>
         <!--**********************************
-            .Content body end
+            Content body end
         ***********************************-->
+        <div class="content-body">
+            <div class="row page-titles mx-0">
+                    <div class="col p-md-0">
+                            @yield('breadcrumb')
+                        <!--<ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+                            <li class="breadcrumb-item active"><a href="javascript:void(0)">Home</a></li>
+                        </ol>-->
+                    </div>
+                </div>
+            <!-- row -->
 
-
+        <div class="container-fluid">
+            @yield('content')
+        </div>
+          <!-- #/ container -->
+        <!-- #/ container -->
+    </div>
         <!--**********************************
             Footer start
         ***********************************-->
@@ -110,39 +109,10 @@
     <!--**********************************
         Scripts
     ***********************************-->
-    <script src="plugins/common/common.min.js"></script>
-    <script src="js/custom.min.js"></script>
-    <script src="js/settings.js"></script>
-    <script src="js/styleSwitcher.js"></script>
-
-    <script src="./plugins/highlightjs/highlight.pack.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
-
-    <script>
-        (function($) {
-        "use strict"
-
-            new quixSettings({
-                version: "light", //2 options "light" and "dark"
-                layout: "vertical", //2 options, "vertical" and "horizontal"
-                navheaderBg: "color_5", //have 10 options, "color_1" to "color_10"
-                headerBg: "color_1", //have 10 options, "color_1" to "color_10"
-                sidebarStyle: "compact", //defines how sidebar should look like, options are: "full", "compact", "mini" and "overlay". If layout is "horizontal", sidebarStyle won't take "overlay" argument anymore, this will turn into "full" automatically!
-                sidebarBg: "color_1", //have 10 options, "color_1" to "color_10"
-                sidebarPosition: "static", //have two options, "static" and "fixed"
-                headerPosition: "fixed", //have two options, "static" and "fixed"
-                containerLayout: "wide",  //"boxed" and  "wide". If layout "vertical" and containerLayout "boxed", sidebarStyle will automatically turn into "overlay".
-                direction: "ltr" //"ltr" = Left to Right; "rtl" = Right to Left
-            });
-
-
-        })(jQuery);
-
-        <!--sweetalert>-->
-    <script src="{{ asset('plugins/sweetalert2/dist/sweetalert2.min.js')}}"></script>
-    <!-- Include this after the sweet alert js file -->
-    @include('sweet::alert')
-    </script>
+    <script src="{{ asset('plugins/common/common.min.js')}}"></script>
+    <script src="{{ asset('js/custom.min.js')}}"></script>
+    <script src="{{ asset('js/settings.js')}}"></script>
+    <script src="{{ asset('js/gleek.js')}}"></script>
 
 </body>
 

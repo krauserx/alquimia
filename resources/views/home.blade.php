@@ -21,17 +21,5 @@
             </div>
         </div>
     </div>
-    @if (Session::has('sweet_alert.alert'))
-    <script>
-        swal({
-            text: "{!! Session::get('sweet_alert.text') !!}",
-            title: "{!! Session::get('sweet_alert.title') !!}",
-            timer: {!! Session::get('sweet_alert.timer') !!},
-            icon: "{!! Session::get('sweet_alert.type') !!}",
-            buttons: "{!! Session::get('sweet_alert.buttons') !!}",
 
-            // more options
-        });
-    </script>
-@endif
 @endsection
