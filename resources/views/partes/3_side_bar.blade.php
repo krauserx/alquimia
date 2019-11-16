@@ -13,15 +13,23 @@
                     </a>
             </li>
             <li>
-                    <a href="{{ route('roles.index')}}" aria-expanded="false">
-                        <i class="icon-list menu-icon"></i><span class="nav-text">Rols</span>
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                        <i class="fa fa-users"></i> <span class="nav-text">Contactos</span>
                     </a>
-                </li>
-                <li>
-                    <a href="{{ route('permissions.index')}}" aria-expanded="false">
-                        <i class="icon-badge menu-icon"></i><span class="nav-text">Permissions</span>
-                    </a>
-                </li>
+                    <ul aria-expanded="false">
+                      <li><a href="{{ route('personas.index')}}">Lista</a></li>
+                      <li><a href="{{ route('personas.create')}}">Crear</a></li>
+                    </ul>
+            </li>
+            <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                    <i class="icon-list menu-icon"></i> <span class="nav-text">Control</span>
+                </a>
+                <ul aria-expanded="false">
+                  <li><a href="{{ route('roles.index')}}">Roles</a></li>
+                  <li><a href="{{ route('permissions.index')}}">Permisos</a></li>
+                </ul>
+            </li>
             <li>
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                         <i class="icon-user menu-icon"></i> <span class="nav-text">Users</span>

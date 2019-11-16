@@ -60,6 +60,7 @@
                                               <span class="invalid-feedback" role="alert">
                                                   <strong>{{ $message }}</strong>
                                               </span>
+                                              <script>
                                           @enderror
                                     </div>
                                     <div class="form-group">
@@ -75,8 +76,8 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
-                                                <label class="form-check-label" for="remember">
-                                                    {{ __('Remember Me') }}
+                                               <!-- <label class="form-check-label" for="remember">
+                                                    {{ __('Remember Me') }}-->
                                                 </label>
                                             </div>
                                         </div>
@@ -117,9 +118,7 @@
     <script src="{{ asset('js/settings.js')}}"></script>
     <script src="{{ asset('js/gleek.js')}}"></script>
     <script src="{{ asset('js/styleSwitcher.js')}}"></script>
-    <!--sweetalert>-->
-    <script src="{{ asset('plugins/sweetalert/js/sweetalert.min.js')}}"></script>
-    <script src="{{ asset('plugins/sweetalert/js/sweetalert.init.js')}}"></script>
+
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
                 /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */

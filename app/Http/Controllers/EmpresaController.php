@@ -28,7 +28,6 @@ class EmpresaController extends Controller
     {
         //obtenemos la info
         $query = Empresa::all();//->paginate(5); //show only 5 items at a time in descending order
-
         return view('empresa.index', compact('query'));
     }
 
@@ -57,25 +56,35 @@ class EmpresaController extends Controller
         //Validating title and body field
         $this->validate($request, [
             'nombre_empresa'=>'required|max:100',
-            //'imagen' =>'required|mimes:jpg,jpeg,png,gif',
+            'imagen' =>'required|mimes:jpg,jpeg,png,gif',
             'direccion' =>'required',
             'dato_contacto' =>'required|array',
             ]);
-
-        DB::beginTransaction();
+            $fileInput = $request->file('imagen');
+            //validar
+            $arrayContacto = $request['dato_contacto'];
+            $arrayidContacto = $request['id_dato_contacto'];
+            DB::beginTransaction();
         try{
-        //validar
-        $arrayContacto = $request['dato_contacto'];
-        $arrayidContacto = $request['id_dato_contacto'];
-          //aqui llenamos el array para guardar el perfiles_tributarios
-          $data = [
-            'nombre_empresa'=>$request['nombre_empresa'],
-            'direccion_empresa'=>$request['direccion'],
-            'logo_empresa'=>'ok',
-          ];
-            // guardamos en la bd todo
-            $empresa = Empresa::create($data);
-                //recorremos los imput
+
+            if ($fileInput) {
+              $randonNumber = str_replace('.',time(),explode(' ',microtime())[1]*rand());
+              $path = public_path().'/logos';
+              $fileType = $fileInput->guessExtension();
+              $fileZise = $fileInput->getClientSize()/1024;
+              $fileName = 'logo_'.$randonNumber.'.'.$fileType;
+              //aqui llenamos el array para guardar el perfiles_tributarios
+              $data = [
+                  'nombre_empresa'=>$request['nombre_empresa'],
+                  'direccion_empresa'=>$request['direccion'],
+                 'logo_empresa'=> $fileName,
+              ];
+
+              //procederemos  guardarlo
+              if ($fileInput->move($path, $fileName)) {
+                /// guardamos en la bd todo
+                  $empresa = Empresa::create($data);
+                   //recorremos los imput
                 foreach ($arrayidContacto as $r) {
                     $infoContacto = [
                         'tipo_dato_id'=>$r,
@@ -88,8 +97,13 @@ class EmpresaController extends Controller
 
                   }
 
-
-        DB::commit();
+              }else {
+                return 'no se pudo mover el file';
+              }
+            }else {
+              return 'no hay datos en el input file ';
+            }
+    DB::commit();
     //Display a successful message upon save
         return redirect()->route('empresa.index')
             ->with('flash_message', 'Empresa: ,
@@ -99,8 +113,6 @@ class EmpresaController extends Controller
                 return redirect()->route('empresa.index')
                             ->with('warning','Something Went Wrong!');
             }
-
-
 
     }
 

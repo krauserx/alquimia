@@ -75,7 +75,7 @@
         <div class="content-body">
             <div class="row page-titles mx-0">
                     <div class="col p-md-0">
-                            @yield('breadcrumb')
+                            @yield('menu_navegacion')
                         <!--<ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
                             <li class="breadcrumb-item active"><a href="javascript:void(0)">Home</a></li>
@@ -113,7 +113,12 @@
     <script src="{{ asset('js/custom.min.js')}}"></script>
     <script src="{{ asset('js/settings.js')}}"></script>
     <script src="{{ asset('js/gleek.js')}}"></script>
+    @include('sweetalert::alert')
+        <!--dataTables>-->
+        <script src="{{ asset('plugins/tables/js/jquery.dataTables.min.js')}}"></script>
+        <script src="{{ asset('plugins/tables/js/datatable/dataTables.bootstrap4.min.js')}}"></script>
+    @yield('js')
 
 </body>
-
+@yield('js_bajo_body')
 </html>

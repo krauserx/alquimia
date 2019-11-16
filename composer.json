@@ -14,7 +14,10 @@
         "laravel/tinker": "^1.0",
         "laravel/ui": "^1.1",
         "laravelcollective/html": "^6.0",
-        "spatie/laravel-permission": "^3.2"
+        "mews/captcha": "^3.0",
+        "realrashid/sweet-alert": "^2.0",
+        "spatie/laravel-permission": "^3.2",
+        "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
         "facade/ignition": "^1.4",

@@ -11,7 +11,7 @@
             <div class="card">
                     <div class="card-body">
                             <div class="text-center">
-                                <img alt="" class="rounded-circle mt-4" src="{{ asset('logos/logo_715640880582408144375229E+16.jpeg')}}" style="width: 45%;">
+                                <img alt="" class="rounded-circle mt-4" src="{{ asset('logos/'.$rw->logo_empresa)}}" style="width: 45%;">
                             <h4 class="card-widget__title text-dark mt-3">{{ $rw->nombre_empresa}}</h4>
                             <p class="text-muted">{{$rw->direccion_empresa}}</p>
                                 <a class="btn gradient-4 btn-lg border-0 btn-rounded px-5" href="javascript:void()">Pagina</a>

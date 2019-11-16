@@ -23,4 +23,7 @@ Route::group( ['middleware' => ['auth']], function() {
 
     Route::resource('posts', 'PostController');
 
+    Route::resource('personas', 'PersonaController');
+    Route::get('/all/persona', 'PersonaController@Registro_Total_Personas')->name('all.persona');
+
 });
