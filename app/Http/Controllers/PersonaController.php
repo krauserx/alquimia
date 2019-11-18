@@ -97,15 +97,15 @@ class PersonaController extends Controller
                     $arrayidContacto = $request['id_dato_contacto'];
                     $newDate_fechan = date("Y-m-d", strtotime($request['fechan']));
 
-               //     DB::beginTransaction();
+                    DB::beginTransaction();
                 try{
                       //aqui llenamos el array para guardar
                       $data = [
                           'p_nombre'=>$request['nombre'],
                           'p_apellido'=>$request['apellido'],
-                          'p_tipo_persona'=> intval($request['direccion']),
-                          'p_sexo'=> intval($request['tipoPersona']),
-                          'p_direccion'=> $request['sexo'],
+                          'p_tipo_persona'=> intval($request['tipoPersona']),
+                          'p_sexo'=> intval($request['sexo']),
+                          'p_direccion'=> $request['direccion'],
                           'p_fecha_nacimeinto'=> $newDate_fechan,
                       ];
 
@@ -120,17 +120,19 @@ class PersonaController extends Controller
                             //insertamos los datos
                             $infoCont = Contacto::create($infoContacto);
                             //asociamos persona con contacto
-                          $infoCont->contacto_empresa()->attach($persona->id);
+                          $infoCont->contacto_persona()->attach($persona->id);
 
                           }
 
             DB::commit();
             //Display a successful message upon save
+            alert()->success('success', 'Los datos de, '. $persona->p_nombre.' han sido registrado!');
                 return redirect()->route('personas.index')
                     ->with('flash_message', 'Empresa: ,
                      '. $persona->p_nombre.' creada!');
                     }catch(\Exception $e){
                         DB::rollback();
+                        alert()->error('warning','Something Went Wrong!');
                         return redirect()->route('personas.index')
                                     ->with('warning','Something Went Wrong!');
                     }
@@ -161,7 +163,16 @@ class PersonaController extends Controller
         //obtenemos la info
         $query = TipoDatoContacto::all();
         $post = Persona::findOrFail($id);
-        return view('personas.edit', compact('post', 'query'));
+        //datos de contacto
+        $infocontacto = array();
+      foreach ($post->persona_contacto as $role =>$row) {
+      $infocontacto[] = [
+        'id'=>$row['id'],
+        'tipo_dato_id'=>$row['tipo_dato_id'],
+        'c_info'=>$row['c_info']
+    ];
+}
+        return view('personas.edit', compact('post', 'query', 'infocontacto'));
     }
 
     /**
@@ -171,9 +182,56 @@ class PersonaController extends Controller
      * @param  \App\Persona  $persona
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Persona $persona)
+    public function update(Request $request,$id)
     {
-        //
+        $this->validate($request, [
+            'p_nombre'=>'required|max:100',
+            'p_tipo_persona'=>'required',
+            'p_sexo'=>'required',
+            'p_fecha_nacimeinto'=>'required',
+            'dato_contacto' =>'required|array',
+        ]);
+        $arrayContacto = $request['dato_contacto'];
+        $arrayidContacto = $request['id_dato_contacto'];
+        $arrayidCon = $request['id_contacto'];
+        DB::beginTransaction();
+        try{
+        $post = Persona::findOrFail($id);
+        $post->p_nombre = $request->input('p_nombre');
+        $post->p_apellido = $request->input('p_apellido');
+        $post->p_tipo_persona = $request->input('p_tipo_persona');
+        $post->p_sexo = $request->input('p_sexo');
+        $post->p_fecha_nacimeinto = date("Y-m-d", strtotime($request->input('p_fecha_nacimeinto')));
+        $post->p_direccion= $request->input('p_direccion');
+        $post->save();
+
+           //recorremos los imput
+           $cont = 0;
+           foreach ($arrayidCon as $r) {
+
+            $cont +=1;
+            //dd($arrayContacto[$cont]);
+            //insertamos los datos id_contacto
+            $infoCont = Contacto::findOrFail($r);
+            $infoCont->c_info= $arrayContacto[$cont-1];
+            $infoCont->save();
+            //dd($r);
+
+          }
+          DB::commit();
+          alert()->success('success', 'Los datos de, '. $post->p_nombre.' han sido actualizado!');
+        return redirect()->route('personas.show',
+            $post->id)->with('flash_message',
+            'Los datos de, '. $post->p_nombre.' han sido actualizado!');
+
+        }catch(\Exception $e){
+            DB::rollback();
+            alert()->error('warning','Something Went Wrong!');
+            return redirect()->route('personas.index')
+                        ->with('warning','Something Went Wrong!');
+
+        }
+
     }
 
     /**

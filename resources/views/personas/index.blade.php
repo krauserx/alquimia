@@ -8,6 +8,9 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
+                            @if(Session::has('flash_message'))
+                            {{Session::get('flash_message')}}
+                            @endif
                                     <table id="info-table" class="table table-striped table-bordered zero-configuration">
                                         <thead>
                                             <tr>
@@ -46,8 +49,8 @@
             {data:'fechaNacimiente'},
             {data:'creado'},
             {"render": function (data, type, row) {
-             return ' <button type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
-             '<span class="fa fa-eye"></span><span class="hidden-xs"> Ver</span></button>'+
+             return ' <a href="{{url("personas")}}/'+row.id+'" type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
+             '<span class="fa fa-eye"></span><span class="hidden-xs"> Ver</span></a>'+
              '<a type="button"  href="{{url("personas")}}/'+row.id+'/edit" class="editar btn btn-warning botonEditar btn-md">'+
              '<span class="fa fa-edit"></span><span class="hidden-xs"> Editar</span></a>'+
              '<button type="button" id="ButtonDelete" class="eliminar btn btn-danger botonEliminar btn-md">'+

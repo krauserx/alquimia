@@ -15,4 +15,10 @@ class Persona extends Model
         'p_nombre', 'p_apellido', 'p_tipo_persona', 'p_sexo', 'p_direccion',
         'p_fecha_nacimeinto', 'created_at'
     ];
+
+    public function persona_contacto()
+    {
+        return $this->belongsToMany('App\Contacto')->withTimestamps();
+    }
+
 }

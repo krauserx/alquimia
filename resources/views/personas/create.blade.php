@@ -1,13 +1,6 @@
 @extends('layouts.app')
 
 @section('title', '| Crear Empresa')
-@section('menu_navegacion')
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('personas.index')}}">Personas</a></li>
-        <li class="breadcrumb-item active"><a href="">Crear</a></li>
-    </ol>
-@endsection
 @section('css')
   <link href="{{ asset('plugins/dropzone/css/dropzone.min.css')}}" rel="stylesheet" />
     <link href="{{ asset('plugins/bootstrap-fileinput/css/fileinput.min.css')}}" rel="stylesheet" />
@@ -22,6 +15,13 @@
     <!-- Daterange picker plugins css public\plugins\bootstrap\4.0.0_alpha.6_bootstrap.min.css -->
     <link href="{{ asset('plugins/timepicker/bootstrap-timepicker.min.css')}}" rel="stylesheet">
     <link href="{{ asset('plugins/bootstrap-daterangepicker/daterangepicker.css')}}" rel="stylesheet">
+@endsection
+@section('menu_navegacion')
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('personas.index')}}">Personas</a></li>
+        <li class="breadcrumb-item active"><a href="">Crear</a></li>
+    </ol>
 @endsection
 @section('content')
 

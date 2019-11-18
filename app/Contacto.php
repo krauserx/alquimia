@@ -18,5 +18,9 @@ class Contacto extends Model
     {
         return $this->belongsToMany('App\Empresa')->withTimestamps();
     }
+    public function contacto_persona()
+    {
+        return $this->belongsToMany('App\Persona')->withTimestamps();
+    }
 
 }
