@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '| Personas registradas')
+@section('title', '| Categorias registradas')
 
 @section('content')
 
@@ -8,28 +8,18 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                            @if( Session::has( 'flash_message' ))
-                            <script>
-                            </script>
-                            {{ Session::get( 'flash_message' ) }}
-                       @elseif( Session::has( 'warning' ))
-                            {{ Session::get( 'warning' ) }} <!-- here to 'withWarning()' -->
-                       @endif
-
                                     <table id="info-table" class="table table-striped table-bordered zero-configuration">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
+                                                <th><div class="pull-center" >IMG</div></th>
                                                 <th><div class="pull-center" >Nombre</div></th>
-                                                <th><div class="pull-center" >Tipo Cleinte</div></th>
-                                                <th><div class="pull-center" >Sexo</div></th>
-                                                <th><div class="pull-center" >Fecha Nacimiento</div></th>
-                                                <th><div class="pull-center" >Creado</div></th>
+                                                <th><div class="pull-center" >Descripción</div></th>
+                                                <th><div class="pull-center" >Creada</div></th>
                                                 <th>Accion</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-
                                         </tbody>
                                     </table>
 
@@ -45,18 +35,19 @@
           processing:true,
           serverSide:true,
           responsive: true,
-          ajax: "{{route('all.personas')}}",
+          ajax: "{{route('all.categorias')}}",
           columns:[
             {data:'id'},
-            {data:'nombre'},
-            {data:'tipoCliente'},
-            {data:'sexo'},
-            {data:'fechaNacimiente'},
-            {data:'creado'},
             {"render": function (data, type, row) {
-             return ' <a href="{{url("personas")}}/'+row.id+'" type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
+             return '<img src="{{ asset("/images/categorias")}}/'+row.c_url_img+'" class="rounded-circle" alt="'+row.c_texto+'" style="width: 50px;">';
+           }},
+            {data:'c_texto'},
+            {data:'c_descripcion'},
+            {data:'created_at'},
+            {"render": function (data, type, row) {
+             return ' <a href="{{url("categorias")}}/'+row.id+'" type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
              '<span class="fa fa-eye"></span><span class="hidden-xs"> Ver</span></a>'+
-             '<a type="button"  href="{{url("personas")}}/'+row.id+'/edit" class="editar btn btn-warning botonEditar btn-md">'+
+             '<a type="button"  href="{{url("categorias")}}/'+row.id+'/edit" class="editar btn btn-warning botonEditar btn-md">'+
              '<span class="fa fa-edit"></span><span class="hidden-xs"> Editar</span></a>'+
              '<button type="button" id="ButtonDelete" onclick="deletedForm('+row.id+')" class="eliminar btn btn-danger botonEliminar btn-md">'+
              '<span class="fa fa-trash"></span><span class="hidden-xs"> Eliminar</span></button> ';
@@ -86,7 +77,7 @@ swal({
 }).then(function(result) {
   if (result.value) {
     $.ajax({
-url: "{{ url('personas')}}"+"/"+id,
+url: "{{ url('categorias')}}"+"/"+id,
 type: "POST",
 data: {
   '_method' : 'delete',

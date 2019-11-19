@@ -126,13 +126,11 @@ class PersonaController extends Controller
 
             DB::commit();
             //Display a successful message upon save
-            alert()->success('success', 'Los datos de, '. $persona->p_nombre.' han sido registrado!');
                 return redirect()->route('personas.index')
-                    ->with('flash_message', 'Empresa: ,
-                     '. $persona->p_nombre.' creada!');
+                    ->with('flash_message', 'Los datos de : ,
+                     '. $persona->p_nombre.' se han creado!');
                     }catch(\Exception $e){
                         DB::rollback();
-                        alert()->error('warning','Something Went Wrong!');
                         return redirect()->route('personas.index')
                                     ->with('warning','Something Went Wrong!');
                     }
@@ -219,14 +217,12 @@ class PersonaController extends Controller
 
           }
           DB::commit();
-          alert()->success('success', 'Los datos de, '. $post->p_nombre.' han sido actualizado!');
         return redirect()->route('personas.show',
             $post->id)->with('flash_message',
-            'Los datos de, '. $post->p_nombre.' han sido actualizado!');
+            'Los datos de '. $post->p_nombre.' han sido actualizado!');
 
         }catch(\Exception $e){
             DB::rollback();
-            alert()->error('warning','Something Went Wrong!');
             return redirect()->route('personas.index')
                         ->with('warning','Something Went Wrong!');
 
@@ -240,8 +236,13 @@ class PersonaController extends Controller
      * @param  \App\Persona  $persona
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Persona $persona)
+    public function destroy($id)
     {
-        //
+        $post = Persona::findOrFail($id);
+        $post->delete();
+
+        return redirect()->route('personas.index')
+            ->with('flash_message',
+             'El registro se a eliminado correctamente!');
     }
 }

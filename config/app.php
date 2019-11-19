@@ -178,7 +178,6 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
-        RealRashid\SweetAlert\SweetAlertServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
 
     ],
@@ -235,7 +234,6 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
-        'Alert' => RealRashid\SweetAlert\Facades\Alert::class,
         'Captcha' => Mews\Captcha\Facades\Captcha::class,
 
     ],

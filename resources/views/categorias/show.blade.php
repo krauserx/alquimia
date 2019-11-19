@@ -14,19 +14,23 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <h1>{{ $post->p_nombre }}</h1>
+                            <div class="text-center">
+                            <img src="{{ asset('/images/categorias')}}/{{$post->c_url_img}}" class="rounded-circle" alt="{{ $post->c_texto }}" style="width: 150px;">
+
+                        <h1>{{ $post->c_texto }}</h1>
                         <hr>
-                        <p class="lead">{{ $post->p_nombre }} </p>
+                        <p class="lead">{{ $post->c_texto }} <br> {{ $post->c_descripcion }} </p>
                         <hr>
-                        {!! Form::open(['method' => 'DELETE', 'route' => ['personas.destroy', $post->id] ]) !!}
+                        {!! Form::open(['method' => 'DELETE', 'route' => ['categorias.destroy', $post->id] ]) !!}
                         <a href="{{ url()->previous() }}" class="btn btn-primary">Back</a>
                         @can('Edit Post')
-                        <a href="{{ route('personas.edit', $post->id) }}" class="btn btn-info" role="button">Edit</a>
+                        <a href="{{ route('categorias.edit', $post->id) }}" class="btn btn-info" role="button">Edit</a>
                         @endcan
                         @can('Delete Post')
                         {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
                         @endcan
                         {!! Form::close() !!}
+                    </div>
 
                     </div>
                 </div>

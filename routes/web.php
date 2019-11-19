@@ -40,6 +40,9 @@ Route::group( ['middleware' => ['auth']], function() {
     Route::resource('posts', 'PostController');
 
     Route::resource('personas', 'PersonaController');
-    Route::get('/all/persona', 'PersonaController@Registro_Total_Personas')->name('all.persona');
+    Route::get('/all/personas', 'PersonaController@Registro_Total_Personas')->name('all.personas');
+
+    Route::resource('categorias', 'CategoriaController');
+    Route::get('/all/categorias', 'CategoriaController@Registro_Total_Categorias')->name('all.categorias');
 
 });

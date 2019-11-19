@@ -14,6 +14,15 @@
             </li>
             <li>
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                         <i class="fa fa-tags"></i> <span class="nav-text">Categorias</span>
+                     </a>
+                     <ul aria-expanded="false">
+                       <li><a href="{{ route('categorias.index')}}">Lista</a></li>
+                       <li><a href="{{ route('categorias.create')}}">Crear</a></li>
+                     </ul>
+             </li>
+            <li>
+                   <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                         <i class="fa fa-users"></i> <span class="nav-text">Contactos</span>
                     </a>
                     <ul aria-expanded="false">

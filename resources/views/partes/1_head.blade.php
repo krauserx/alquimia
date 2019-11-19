@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon.png')}}">
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="{{ asset('./plugins/highlightjs/styles/darkula.css')}}">
+    <link href="{{ asset('plugins/sweetalert2/dist/sweetalert2.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('plugins/sweetalert/css/sweetalert.css')}}" rel="stylesheet">
     <link href="{{ asset('plugins/tables/css/datatable/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
     <link href="{{ asset('css/style.css')}}" rel="stylesheet">
         <!--ccs head por paginas-->

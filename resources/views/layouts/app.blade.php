@@ -113,12 +113,35 @@
     <script src="{{ asset('js/custom.min.js')}}"></script>
     <script src="{{ asset('js/settings.js')}}"></script>
     <script src="{{ asset('js/gleek.js')}}"></script>
-    @include('sweetalert::alert')
+    <!--sweetalert>-->
+    <script src="{{ asset('plugins/sweetalert2/dist/sweetalert2.min.js')}}"></script>
         <!--dataTables>-->
         <script src="{{ asset('plugins/tables/js/jquery.dataTables.min.js')}}"></script>
         <script src="{{ asset('plugins/tables/js/datatable/dataTables.bootstrap4.min.js')}}"></script>
     @yield('js')
-
 </body>
 @yield('js_bajo_body')
+@if(Session::has('flash_message'))
+ <script >
+      swal({
+           title:'Success!',
+          text:"{{Session::get('flash_message')}}",
+         timer:3500,
+          type:'success'
+      }).then((value) => {
+        //location.reload();
+      }).catch(swal.noop);
+ </script>
+ @elseif((Session::has('warning')))
+ <script >
+    swal({
+         title:'Oops!',
+        text:"{{Session::get('warning')}}",
+       timer:3500,
+        type:'error'
+    }).then((value) => {
+      //location.reload();
+    }).catch(swal.noop);
+</script>
+ @endif
 </html>
