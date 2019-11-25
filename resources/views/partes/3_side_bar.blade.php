@@ -8,6 +8,15 @@
                     </a>
             </li>
             <li>
+                <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                     <i class="fa fa-th-large"></i> <span class="nav-text">Productos</span>
+                 </a>
+                 <ul aria-expanded="false">
+                   <li><a href="{{ route('productos.index')}}">Lista</a></li>
+                   <li><a href="{{ route('productos.create')}}">Crear</a></li>
+                 </ul>
+         </li>
+            <li>
                     <a href="{{ route('empresa.index')}}" aria-expanded="false">
                         <i class="icon-globe-alt menu-icon"></i><span class="nav-text">Empresa</span>
                     </a>

@@ -58,7 +58,7 @@ class PostController extends Controller {
 
     //Display a successful message upon save
         return redirect()->route('posts.index')
-            ->with('flash_message', 'Article,
+            ->with('success', 'Article,
              '. $post->title.' created');
     }
 
@@ -103,7 +103,7 @@ class PostController extends Controller {
         $post->save();
 
         return redirect()->route('posts.show',
-            $post->id)->with('flash_message',
+            $post->id)->with('success',
             'Article, '. $post->title.' updated');
 
     }
@@ -119,7 +119,7 @@ class PostController extends Controller {
         $post->delete();
 
         return redirect()->route('posts.index')
-            ->with('flash_message',
+            ->with('success',
              'Article successfully deleted');
 
     }

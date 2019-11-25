@@ -127,7 +127,7 @@ class PersonaController extends Controller
             DB::commit();
             //Display a successful message upon save
                 return redirect()->route('personas.index')
-                    ->with('flash_message', 'Los datos de : ,
+                    ->with('success', 'Los datos de : ,
                      '. $persona->p_nombre.' se han creado!');
                     }catch(\Exception $e){
                         DB::rollback();
@@ -218,7 +218,7 @@ class PersonaController extends Controller
           }
           DB::commit();
         return redirect()->route('personas.show',
-            $post->id)->with('flash_message',
+            $post->id)->with('success',
             'Los datos de '. $post->p_nombre.' han sido actualizado!');
 
         }catch(\Exception $e){
@@ -242,7 +242,7 @@ class PersonaController extends Controller
         $post->delete();
 
         return redirect()->route('personas.index')
-            ->with('flash_message',
+            ->with('success',
              'El registro se a eliminado correctamente!');
     }
 }

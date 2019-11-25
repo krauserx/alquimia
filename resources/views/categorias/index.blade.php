@@ -8,6 +8,17 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
+                            <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                         <div class="panel-title pull-left">
+                                             <h3 class="m-0 text-primary">Lista de Categorias</h3>
+                                         </div>
+                                        <div class="panel-title pull-right">
+                                            <a href="{{ route('categorias.create')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
+                                                Nuevo Categoria</a></div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
                                     <table id="info-table" class="table table-striped table-bordered zero-configuration">
                                         <thead>
                                             <tr>

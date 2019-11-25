@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '| Personas registradas')
+@section('title', '| Productos registradas')
 
 @section('content')
 
@@ -11,11 +11,11 @@
                             <div class="panel panel-default">
                                     <div class="panel-heading">
                                          <div class="panel-title pull-left">
-                                             <h3 class="m-0 text-primary">Lista de personas</h3>
+                                             <h3 class="m-0 text-primary">Lista de productos</h3>
                                          </div>
                                         <div class="panel-title pull-right">
-                                            <a href="{{ route('personas.create')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
-                                                Nuevo Persona</a></div>
+                                            <a href="{{ route('productos.create')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
+                                                Nuevo Producto</a></div>
                                         <div class="clearfix"></div>
                                     </div>
                                 </div>
@@ -24,16 +24,18 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
+                                                <th><div class="pull-center" >IMG</div></th>
+                                                <th><div class="pull-center" >Código</div></th>
                                                 <th><div class="pull-center" >Nombre</div></th>
-                                                <th><div class="pull-center" >Tipo Cleinte</div></th>
-                                                <th><div class="pull-center" >Sexo</div></th>
-                                                <th><div class="pull-center" >Fecha Nacimiento</div></th>
+                                                <th><div class="pull-center" >Categoria</div></th>
+                                                <th><div class="pull-center" >Precio</div></th>
+                                                <th><div class="pull-center" >Tipo</div></th>
+                                                <th><div class="pull-center" >Descripción</div></th>
                                                 <th><div class="pull-center" >Creado</div></th>
                                                 <th>Accion</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-
                                         </tbody>
                                     </table>
 
@@ -49,18 +51,23 @@
           processing:true,
           serverSide:true,
           responsive: true,
-          ajax: "{{route('all.personas')}}",
+          ajax: "{{route('all.productos')}}",
           columns:[
             {data:'id'},
-            {data:'nombre'},
-            {data:'tipoCliente'},
-            {data:'sexo'},
-            {data:'fechaNacimiente'},
-            {data:'creado'},
             {"render": function (data, type, row) {
-             return ' <a href="{{url("personas")}}/'+row.id+'" type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
+             return '<img src="{{ asset("/images/productos")}}/'+row.p_url_img+'" class="rounded-circle" alt="IMG Productos ALQUIMIA" style="width: 50px;">';
+           }},
+           {data:'p_codigo'},
+            {data:'p_nombre'},
+            {data:'categoria'},
+            {data:'p_precio_venta'},
+            {data:'p_tipo'},
+            {data:'p_descripcion'},
+            {data:'created_at'},
+            {"render": function (data, type, row) {
+             return ' <a href="{{url("productos")}}/'+row.id+'" type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
              '<span class="fa fa-eye"></span><span class="hidden-xs"> Ver</span></a>'+
-             '<a type="button"  href="{{url("personas")}}/'+row.id+'/edit" class="editar btn btn-warning botonEditar btn-md">'+
+             '<a type="button"  href="{{url("productos")}}/'+row.id+'/edit" class="editar btn btn-warning botonEditar btn-md">'+
              '<span class="fa fa-edit"></span><span class="hidden-xs"> Editar</span></a>'+
              '<button type="button" id="ButtonDelete" onclick="deletedForm('+row.id+')" class="eliminar btn btn-danger botonEliminar btn-md">'+
              '<span class="fa fa-trash"></span><span class="hidden-xs"> Eliminar</span></button> ';
@@ -72,6 +79,7 @@
                     "background-color": "#f3f3f3",
                     "font-weight": "bold"
                 });
+
 
 {{--funcion eliminar registro--}}
 function deletedForm(id) {
@@ -90,7 +98,7 @@ swal({
 }).then(function(result) {
   if (result.value) {
     $.ajax({
-url: "{{ url('personas')}}"+"/"+id,
+url: "{{ url('productos')}}"+"/"+id,
 type: "POST",
 data: {
   '_method' : 'delete',

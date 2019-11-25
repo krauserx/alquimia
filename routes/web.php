@@ -45,4 +45,8 @@ Route::group( ['middleware' => ['auth']], function() {
     Route::resource('categorias', 'CategoriaController');
     Route::get('/all/categorias', 'CategoriaController@Registro_Total_Categorias')->name('all.categorias');
 
+    Route::resource('productos', 'ProductoController');
+    Route::get('/all/productos', 'ProductoController@Registro_Total_Productos')->name('all.productos');
+    Route::get('productos/validarcodigoproducto/ejecutar', 'ProductoController@ejecutar')->name('validarcodigoproducto.ejecutar');
+
 });

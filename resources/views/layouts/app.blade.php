@@ -121,7 +121,7 @@
     @yield('js')
 </body>
 @yield('js_bajo_body')
-@if(Session::has('flash_message'))
+@if(Session::has('success'))
  <script >
       swal({
            title:'Success!',

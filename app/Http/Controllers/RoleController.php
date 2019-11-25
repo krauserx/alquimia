@@ -69,7 +69,7 @@ class RoleController extends Controller {
         }
 
         return redirect()->route('roles.index')
-            ->with('flash_message',
+            ->with('success',
              'Role'. $role->name.' added!');
     }
 
@@ -128,7 +128,7 @@ class RoleController extends Controller {
         }
 
         return redirect()->route('roles.index')
-            ->with('flash_message',
+            ->with('success',
              'Role'. $role->name.' updated!');
     }
 
@@ -144,7 +144,7 @@ class RoleController extends Controller {
         $role->delete();
 
         return redirect()->route('roles.index')
-            ->with('flash_message',
+            ->with('success',
              'Role deleted!');
 
     }

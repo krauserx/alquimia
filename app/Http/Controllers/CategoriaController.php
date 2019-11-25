@@ -109,7 +109,7 @@ class CategoriaController extends Controller
         DB::commit();
         //Display a successful message upon save
             return redirect()->route('categorias.index')
-                ->with('flash_message', 'La categoria : ,
+                ->with('success', 'La categoria : ,
                  '. $empresa->c_texto.' se ha creado!');
                 }catch(\Exception $e){
                     DB::rollback();
@@ -197,7 +197,7 @@ class CategoriaController extends Controller
         DB::commit();
         //Display a successful message upon save
             return redirect()->route('categorias.index')
-                ->with('flash_message', 'La categoria
+                ->with('success', 'La categoria
                  '. $post->c_texto.' se ha actualizado!');
                 }catch(\Exception $e){
                     DB::rollback();
@@ -219,7 +219,7 @@ class CategoriaController extends Controller
         $post->delete();
 
         return redirect()->route('categorias.index')
-            ->with('flash_message',
+            ->with('success',
              'El registro se ha eliminado correctamente!');
 
 

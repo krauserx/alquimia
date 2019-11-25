@@ -106,7 +106,7 @@ class EmpresaController extends Controller
     DB::commit();
     //Display a successful message upon save
         return redirect()->route('empresa.index')
-            ->with('flash_message', 'Empresa: ,
+            ->with('success', 'Empresa: ,
              '. $empresa->nombre_empresa.' creada!');
             }catch(\Exception $e){
                 DB::rollback();
