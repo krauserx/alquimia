@@ -10,6 +10,7 @@
     <a href="{{ route('permissions.index') }}" class="btn btn-default pull-right">Permissions</a></h1>
     <hr>
     <div class="table-responsive">
+            <div class="panel-heading">Page {{ $users->currentPage() }} of {{ $users->lastPage() }}</div>
         <table class="table table-bordered table-striped">
 
             <thead>
@@ -43,6 +44,9 @@
             </tbody>
 
         </table>
+        <div class="text-center">
+            {!! $users->links() !!}
+        </div>
     </div>
 
     <a href="{{ route('users.create') }}" class="btn btn-success">Add User</a>

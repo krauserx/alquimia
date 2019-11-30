@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 use DB;
 use Yajra\DataTables\DataTables;
 use App\Categoria;
-
+use Auth;
 class ProductoController extends Controller
 {
      //constructor para valdiar permisos
-     public function __construct() {
-        $this->middleware(['auth', 'isAdmin']); //isAdmin middleware lets only users with a //specific permission permission to access these resources
-    }
+    /* public function __construct() {
+        $this->middleware(['auth', 'clearance'])->except('index', 'show');
+    }*/
     /**
      * Display a listing of the resource.
      *
@@ -47,6 +47,12 @@ class ProductoController extends Controller
             $tipoProd = 'Mercaderia';
             $cantidad = $row['p_catidad'];
           }
+          $validarPermisos = 0;
+          if(Auth::user()->hasRole('Admin')){
+            $validarPermisos = 1;//1 indica q es admin
+          }elseif(Auth::user()->hasRole('Cliente')){
+            $validarPermisos = 2;//2 indica q es cleinte
+          }
         $obj[] = [
           'id'=>$row['id'],
           'p_url_img'=>$row['p_url_img'],
@@ -58,7 +64,8 @@ class ProductoController extends Controller
           'cantidad' => $cantidad,
           'p_tipo'=>$tipoProd,
           'p_descripcion'=>$row['p_descripcion'],
-          'created_at'=>date("d/m/Y", strtotime($row['created_at']))
+          'created_at'=>date("d/m/Y", strtotime($row['created_at'])),
+          'permiso_permitido'=>$validarPermisos
         ];
       }
       return Datatables::of($obj)->make(true);

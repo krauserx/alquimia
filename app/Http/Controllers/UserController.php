@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 
 use App\User;
 use Auth;
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 //Importing laravel-permission models
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -27,7 +28,7 @@ class UserController extends Controller {
 
     public function index() {
         //Get all users and pass it to the view
-            $users = User::all();
+            $users = User::orderby('id', 'desc')->paginate(10);
             return view('users.index')->with('users', $users);
         }
 

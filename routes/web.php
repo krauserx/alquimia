@@ -1,29 +1,33 @@
 <?php
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use App\Persona;
+use App\Factura;
+use App\FacturaDetalle;
 Route::get('correo', function () {
+    $buscarDtalleFactId = FacturaDetalle::where('factura_id',8)
+                ->where('producto_id', 1)
+                ->get();
+                foreach ($buscarDtalleFactId as $key) {
+                    $numeroFactura = $key->factura_id;
+                }
+                echo $numeroFactura;
+    //dd($buscarDtalleFactId);
+    //dd(session()->get('NumeroFactura'));
 
-    $query = Persona::find(4);
-    //dd($query);
-    //dd($query->persona_contacto() );
-    $data = Persona::findOrFail(4);
-    $resultado = array();
-    foreach ($data->persona_contacto as $role =>$row) {
-      $resultado[] = [
-        'id'=>$row['id'],
-        'tipo_dato_id'=>$row['tipo_dato_id'],
-        'c_info'=>$row['c_info']
-    ];
 
-}
-foreach ($resultado as $role =>$row) {
-    echo $row['tipo_dato_id'];
-
-}
 
 
     });
+
+    Route::get('/clear', function() {
+        $exitCode = Artisan::call('config:clear');
+        $exitCode = Artisan::call('cache:clear');
+        //$exitCode = Artisan::call('config:cache');
+        $exitCode = Artisan::call('view:clear');
+        return 'DONE'; //Return anything
+    });
+
+
 Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
 
@@ -48,5 +52,7 @@ Route::group( ['middleware' => ['auth']], function() {
     Route::resource('productos', 'ProductoController');
     Route::get('/all/productos', 'ProductoController@Registro_Total_Productos')->name('all.productos');
     Route::get('productos/validarcodigoproducto/ejecutar', 'ProductoController@ejecutar')->name('validarcodigoproducto.ejecutar');
+
+    Route::resource('carro', 'FacturaController');
 
 });

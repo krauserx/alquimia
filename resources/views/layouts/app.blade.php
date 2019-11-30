@@ -118,6 +118,13 @@
         <!--dataTables>-->
         <script src="{{ asset('plugins/tables/js/jquery.dataTables.min.js')}}"></script>
         <script src="{{ asset('plugins/tables/js/datatable/dataTables.bootstrap4.min.js')}}"></script>
+
+<!-- Toastr-->
+<script src="{{ asset('plugins/toastr/js/toastr.min.js')}}"></script>
+<script src="{{ asset('plugins/toastr/js/toastr.init.js')}}"></script>
+<script src="{{ asset('plugins/toastr/js/toastrsif.js')}}"></script>
+<script src="{{ asset('plugins/overlay/loadingoverlay.min.js')}}"></script>
+
     @yield('js')
 </body>
 @yield('js_bajo_body')

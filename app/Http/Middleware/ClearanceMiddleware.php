@@ -19,7 +19,7 @@ class ClearanceMiddleware {
             return $next($request);
         }
 
-        if ($request->is('posts/create'))//If user is creating a post
+        if ($request->is('*/create'))//If user is creating a post
          {
             if (!Auth::user()->hasPermissionTo('Create Post'))
          {
@@ -30,7 +30,7 @@ class ClearanceMiddleware {
             }
         }
 
-        if ($request->is('posts/*/edit')) //If user is editing a post
+        if ($request->is('*/*/edit')) //If user is editing a post
          {
             if (!Auth::user()->hasPermissionTo('Edit Post')) {
                 abort('401');

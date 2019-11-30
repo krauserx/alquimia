@@ -47,7 +47,8 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+    "files": ["app/Helpers/App_functions.php"]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

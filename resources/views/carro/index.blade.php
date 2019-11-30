@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '| Productos registradas')
+@section('title', '| Personas registradas')
 
 @section('content')
 
@@ -11,11 +11,13 @@
                             <div class="panel panel-default">
                                     <div class="panel-heading">
                                          <div class="panel-title pull-left">
-                                             <h3 class="m-0 text-primary">Lista de productos</h3>
+                                             <h3 class="m-0 text-primary">Lista de personas</h3>
+                                             funcion {{date('Y-m-d')}}
+                                             {{Auth::user()->hasRole('Cliente')}}
                                          </div>
                                         <div class="panel-title pull-right">
-                                            <a href="{{ route('productos.create')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
-                                                Nuevo Producto</a></div>
+                                            <a href="{{ route('personas.create')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
+                                                Nuevo Persona</a></div>
                                         <div class="clearfix"></div>
                                     </div>
                                 </div>
@@ -24,18 +26,16 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th><div class="pull-center" >IMG</div></th>
-                                                <th><div class="pull-center" >Código</div></th>
                                                 <th><div class="pull-center" >Nombre</div></th>
-                                                <th><div class="pull-center" >Categoria</div></th>
-                                                <th><div class="pull-center" >Precio</div></th>
-                                                <th><div class="pull-center" >Tipo</div></th>
-                                                <th><div class="pull-center" >Descripción</div></th>
+                                                <th><div class="pull-center" >Tipo Cleinte</div></th>
+                                                <th><div class="pull-center" >Sexo</div></th>
+                                                <th><div class="pull-center" >Fecha Nacimiento</div></th>
                                                 <th><div class="pull-center" >Creado</div></th>
-                                                <th>Opciones</th>
+                                                <th>Accion</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+
                                         </tbody>
                                     </table>
 
@@ -51,33 +51,21 @@
           processing:true,
           serverSide:true,
           responsive: true,
-          ajax: "{{route('all.productos')}}",
+          ajax: "{{route('all.personas')}}",
           columns:[
             {data:'id'},
+            {data:'nombre'},
+            {data:'tipoCliente'},
+            {data:'sexo'},
+            {data:'fechaNacimiente'},
+            {data:'creado'},
             {"render": function (data, type, row) {
-             return '<img src="{{ asset("/images/productos")}}/'+row.p_url_img+'" class="rounded-circle" alt="IMG Productos ALQUIMIA" style="width: 50px;">';
-           }},
-           {data:'p_codigo'},
-            {data:'p_nombre'},
-            {data:'categoria'},
-            {data:'p_precio_venta'},
-            {data:'p_tipo'},
-            {data:'p_descripcion'},
-            {data:'created_at'},
-            {"render": function (data, type, row) {
-                if(row.permiso_permitido == '1'){ ////1 indica q es admin
-             return ' <a href="{{url("productos")}}/'+row.id+'" type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
+             return ' <a href="{{url("personas")}}/'+row.id+'" type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
              '<span class="fa fa-eye"></span><span class="hidden-xs"> Ver</span></a>'+
-             '<a type="button"  href="{{url("productos")}}/'+row.id+'/edit" class="editar btn btn-warning botonEditar btn-md">'+
+             '<a type="button"  href="{{url("personas")}}/'+row.id+'/edit" class="editar btn btn-warning botonEditar btn-md">'+
              '<span class="fa fa-edit"></span><span class="hidden-xs"> Editar</span></a>'+
              '<button type="button" id="ButtonDelete" onclick="deletedForm('+row.id+')" class="eliminar btn btn-danger botonEliminar btn-md">'+
              '<span class="fa fa-trash"></span><span class="hidden-xs"> Eliminar</span></button> ';
-            }else if(row.permiso_permitido == '2'){
-                return '<div class="btn-group"> <a href="{{url("productos")}}/'+row.id+'" type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
-             '<span class="fa fa-eye"></span><span class="hidden-xs"></span></a>'+
-             '<a type="button"  href="#" onclick="addProducto(1,'+row.id+');"  class="editar btn btn-success botonEditar btn-md">'+
-             '<span class="fa fa-plus"></span><span class="hidden-xs"></span></a></div>';
-            }
            }},
 
           ]
@@ -86,7 +74,6 @@
                     "background-color": "#f3f3f3",
                     "font-weight": "bold"
                 });
-
 
 {{--funcion eliminar registro--}}
 function deletedForm(id) {
@@ -105,7 +92,7 @@ swal({
 }).then(function(result) {
   if (result.value) {
     $.ajax({
-url: "{{ url('productos')}}"+"/"+id,
+url: "{{ url('personas')}}"+"/"+id,
 type: "POST",
 data: {
   '_method' : 'delete',
@@ -145,44 +132,6 @@ error : function(data){
 });
 
 }
-////funcion selccionar grupo de facturacion
-function addProducto(i, b) {
-//console.log($('input[name=_token]').val());
 
-$.LoadingOverlay("show");
-// correcto insertamos en la bd
-url = "{{ url('carro')}}";
-$.ajax({//4
-  url : url,
-  type : "POST",
-  data: {
-    '_token': $('input[name=_token]').val(),
-    'tipoVenta':2,
-    'producto_id': b
-
-  },
-  processData: true,
-//id_factura_perfil
-  success: function(data){ //5
-  //console.log(data);
-  $.LoadingOverlay("hide");
-    //success, warning, info, warning, error, position: right, left, top, bottom, Top Full Width
-    //Bottom Full Width, Top Center, Bottom Center
-    alerttoastr(data.tipo,data.mns+' #'+data.factura, 'Genial!', 'bottom-left');
-
-  }, //5
-  error : function(data){ //7
- console.log(data);
- $.LoadingOverlay("hide");
-    swal({
-          title: 'Oops!',
-          text: "El no se ha podido guardar el registrado!",
-          type: 'error',
-          confirmButtonText: 'OK!'
-        });
-  } //7
-}); //4
-
-}
             </script>
 @endsection
