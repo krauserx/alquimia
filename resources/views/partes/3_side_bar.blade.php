@@ -15,6 +15,15 @@
                     </a>
             </li>
             <li>
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                         <i class="fa fa-check-square-o"></i> <span class="nav-text">Control</span>
+                     </a>
+                     <ul aria-expanded="false">
+                       <li><a href="{{ route('control.index')}}">Lista</a></li>
+                       <li><a href="{{ route('control.create')}}">Crear</a></li>
+                     </ul>
+             </li>
+            <li>
                 <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                      <i class="fa fa-th-large"></i> <span class="nav-text">Productos</span>
                  </a>
@@ -65,9 +74,20 @@
                     </ul>
             </li>
             @elseif(Auth::user()->hasRole('Cliente'))
+
+            <li>
+                    <a href="{{ route('carro.index')}}" aria-expanded="false">
+                        <i class="fa fa-shopping-cart"></i><span class="nav-text">Carrito</span>
+                    </a>
+                </li>
+                <li>
+                        <a href="{{ route('pedidos.index')}}" aria-expanded="false">
+                            <i class="fa fa-list"></i><span class="nav-text">Mis Pedidos</span>
+                        </a>
+                    </li>
             <li>
                     <a href="{{ route('productos.index')}}" aria-expanded="false">
-                        <i class="fa fa-shopping-cart"></i><span class="nav-text">Produtos</span>
+                        <i class="fa fa-th-large"></i><span class="nav-text">Produtos</span>
                     </a>
             </li>
 

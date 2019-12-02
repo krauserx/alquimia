@@ -21,4 +21,6 @@ class FacturaDetalle extends Model
             'fd_descuento',
             'fd_nota'
         ];
+
+
 }

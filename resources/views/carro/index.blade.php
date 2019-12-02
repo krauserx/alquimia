@@ -11,70 +11,148 @@
                             <div class="panel panel-default">
                                     <div class="panel-heading">
                                          <div class="panel-title pull-left">
-                                             <h3 class="m-0 text-primary">Lista de personas</h3>
-                                             funcion {{date('Y-m-d')}}
-                                             {{Auth::user()->hasRole('Cliente')}}
+                                             <h3 class="m-0 text-primary">Productos en el Carrito</h3>
                                          </div>
                                         <div class="panel-title pull-right">
-                                            <a href="{{ route('personas.create')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
-                                                Nuevo Persona</a></div>
+                                            <a href="{{ route('productos.index')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
+                                                Seguir agregando</a></div>
                                         <div class="clearfix"></div>
                                     </div>
                                 </div>
+                                <input type="hidden" id="search" value="">{{--imput para q cargue el registro ajax la tbala detalles facturas--}}
 
-                                    <table id="info-table" class="table table-striped table-bordered zero-configuration">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th><div class="pull-center" >Nombre</div></th>
-                                                <th><div class="pull-center" >Tipo Cleinte</div></th>
-                                                <th><div class="pull-center" >Sexo</div></th>
-                                                <th><div class="pull-center" >Fecha Nacimiento</div></th>
-                                                <th><div class="pull-center" >Creado</div></th>
-                                                <th>Accion</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
 
-                                        </tbody>
-                                    </table>
 
                     </div>
                 </div>
             </div>
         </div>
+        <div class="row" id="datos_factura">
+
+            </div>
 @endsection
 @section('js_bajo_body')
 <script>
+      //detalles de la facturacion
+ detalles_facturacion();
+ $(document).on('keyup', '#search', function(){
+  var query = $(this).val();
 
-        var table1 = $('#info-table').DataTable({
-          processing:true,
-          serverSide:true,
-          responsive: true,
-          ajax: "{{route('all.personas')}}",
-          columns:[
-            {data:'id'},
-            {data:'nombre'},
-            {data:'tipoCliente'},
-            {data:'sexo'},
-            {data:'fechaNacimiente'},
-            {data:'creado'},
-            {"render": function (data, type, row) {
-             return ' <a href="{{url("personas")}}/'+row.id+'" type="button" id="ButtonVer" class="ver btn btn-info botonEditar btn-md">'+
-             '<span class="fa fa-eye"></span><span class="hidden-xs"> Ver</span></a>'+
-             '<a type="button"  href="{{url("personas")}}/'+row.id+'/edit" class="editar btn btn-warning botonEditar btn-md">'+
-             '<span class="fa fa-edit"></span><span class="hidden-xs"> Editar</span></a>'+
-             '<button type="button" id="ButtonDelete" onclick="deletedForm('+row.id+')" class="eliminar btn btn-danger botonEliminar btn-md">'+
-             '<span class="fa fa-trash"></span><span class="hidden-xs"> Eliminar</span></button> ';
-           }},
+  detalles_facturacion(query);
+ });
+//cargamos la tabla detalles de la facturacion
+function detalles_facturacion(query = '')
+{
+    var origen = 'cliente';
+    $.LoadingOverlay("show");
+ $.ajax({
+  url:"{{ route('all.productos_facturas') }}",
+  method:'GET',
+  data:{query:query, origen: origen},
+  dataType:'json',
+  success:function(data)
+  {
+    $.LoadingOverlay("hide");
+    $('#datos_factura').html("");
+   // console.log(data.detalles);
+   $('#datos_factura').html(data.detalles);
+   $('#total_records').text(data.total_data);
 
-          ]
+ }
+});
+}
+//sumar cantidad
+function sumarcantidad(i){
+var cantidad = $('#cantidad_factura_'+i).val();
+if ( cantidad=='' || cantidad > 0) {
+  var suma = parseFloat(cantidad) + 1;
+  $('#cantidad_factura_'+i).val(suma);
+}
 
-        });$('select, input[type="search"]').css({
-                    "background-color": "#f3f3f3",
-                    "font-weight": "bold"
-                });
+}
+function restarcantidad(i){
+  var cantidad = $('#cantidad_factura_'+i).val();
+  if (cantidad>0) {
+    var suma = cantidad - 1;
+    $('#cantidad_factura_'+i).val(suma);
+  }else {
+    $('#cantidad_factura_'+i).val('1');
+  }
 
+}
+//funcion para actualizar bd con los input de la dataTable lista_producto_en_factura
+function actualizar(i){
+  //i es el id de la tabla detalles
+    var cantidad = $('#cantidad_factura_'+i).val();
+    //comprobar que el valor escrito, son solo números.
+
+        if(isNaN(cantidad) || cantidad=== '') {
+          swal({
+                title: 'Oops!',
+                text: "Cantidad solo debe contener números",
+                type: 'error',
+                confirmButtonText: 'OK!'
+              });
+              return false;
+          }
+          url = "{{ route('detalle.proceder')}}";
+          $.ajax({//4
+            url : url,
+            type : "POST",
+            data: {
+              '_token': $('input[name=_token]').val(),
+              'id_rw': i,
+              'cantidad_factura':cantidad,
+              'tb_id':'actualizar'
+            } ,
+            success: function(data){ //5
+            console.log(data);
+
+            detalles_facturacion('');
+            //success, warning, info, warning, error, position: right, left, top, bottom, Top Full Width
+            //Bottom Full Width, Top Center, Bottom Center
+            alerttoastr('success','Se ha procesado la solicitud sastifactoriamente!', 'Genial!', 'bottom-left');
+            }, //5
+            error : function(data){ //7
+            console.log(data);
+
+              //success, warning, info, warning, error, position: right, left, top, bottom, Top Full Width
+              //Bottom Full Width, Top Center, Bottom Center
+              alerttoastr('error','Algo ha salido mal!', 'Oops!', 'bottom-left');
+            } //7
+          }); //4
+}
+///ejecutamos pedidos
+function ejecutarPedido(){
+  //i es el id de la tabla detalles
+    var factid = $('#Numerofactura').val();
+    //comprobar que el valor escrito, son solo números.
+          url = "{{ route('realizar.pedido')}}";
+          $.ajax({//4
+            url : url,
+            type : "POST",
+            data: {
+              '_token': $('input[name=_token]').val(),
+              'Numerofactura':factid,
+              'tb_id':'actualizar'
+            } ,
+            success: function(data){ //5
+            //console.log(data);
+            //window.location.href='{{ route("productos.index")}}';
+            detalles_facturacion('');
+            //success, warning, info, warning, error, position: right, left, top, bottom, Top Full Width
+            //Bottom Full Width, Top Center, Bottom Center
+            alerttoastr('success','Se ha procesado la solicitud sastifactoriamente!', 'Genial!', 'top-right');
+            }, //5
+            error : function(data){ //7
+           // console.log(data);
+
+              //success, warning, info, warning, error, position: right, left, top, bottom, Top Full Width
+              //Bottom Full Width, Top Center, Bottom Center
+              alerttoastr('error','Algo ha salido mal!', 'Oops!', 'bottom-left');
+            } //7
+          }); //4
+}
 {{--funcion eliminar registro--}}
 function deletedForm(id) {
 
@@ -92,14 +170,14 @@ swal({
 }).then(function(result) {
   if (result.value) {
     $.ajax({
-url: "{{ url('personas')}}"+"/"+id,
+url: "{{ url('carro')}}"+"/"+id,
 type: "POST",
 data: {
   '_method' : 'delete',
   '_token' : csrf_token
 },
 success : function(data){
-  table1.ajax.reload();
+    detalles_facturacion('');
   swal({
         title: 'Genail!',
         text: 'Se ha aliminado el registro correctamente!',
@@ -132,6 +210,5 @@ error : function(data){
 });
 
 }
-
             </script>
 @endsection

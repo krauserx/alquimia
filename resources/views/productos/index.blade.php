@@ -18,6 +18,13 @@
                                                 Nuevo Producto</a></div>
                                         <div class="clearfix"></div>
                                     </div>
+                                    <div id="linkCarro" class="alert alert-success alert-dismissible fade show" style="display:none;">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span>
+                                            </button> <strong>Genial !</strong> se ha agregado el producto al carrito sastifactoriamente.
+                                            <a href="{{ route('carro.index')}}" type="button" class="btn mb-1 btn-flat btn-outline-warning">Ir al Carrito <span class="btn-icon-right"><i class="fa fa-shopping-cart"></i></span>
+                                            </a>
+                                        </div>
+
                                 </div>
 
                                     <table id="info-table" class="table table-striped table-bordered zero-configuration">
@@ -166,6 +173,7 @@ $.ajax({//4
   success: function(data){ //5
   //console.log(data);
   $.LoadingOverlay("hide");
+  $('#linkCarro').show();
     //success, warning, info, warning, error, position: right, left, top, bottom, Top Full Width
     //Bottom Full Width, Top Center, Bottom Center
     alerttoastr(data.tipo,data.mns+' #'+data.factura, 'Genial!', 'bottom-left');

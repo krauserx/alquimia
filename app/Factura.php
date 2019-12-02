@@ -17,5 +17,10 @@ class Factura extends Model
         'f_estado', 'f_tipo_factura', 'f_pedido_aprobado', 'f_estado_entrega', 'f_fecha_a_entregar',
         'f_fecha_entregado'
     ];
+    public function detallesfactura_facturas()
+    {
+        return $this->hasMany('App\FacturaDetalle');
+    }
+
 
 }

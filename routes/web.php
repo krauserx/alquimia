@@ -4,16 +4,14 @@ use Spatie\Permission\Models\Permission;
 use App\Factura;
 use App\FacturaDetalle;
 Route::get('correo', function () {
-    $buscarDtalleFactId = FacturaDetalle::where('factura_id',8)
-                ->where('producto_id', 1)
-                ->get();
-                foreach ($buscarDtalleFactId as $key) {
-                    $numeroFactura = $key->factura_id;
-                }
-                echo $numeroFactura;
-    //dd($buscarDtalleFactId);
-    //dd(session()->get('NumeroFactura'));
 
+    $datos =DB::select('SELECT * FROM
+    controles
+     INNER JOIN personas ON personas.id = controles.persona_id
+     INNER JOIN users ON users.id = controles.usario_id
+     WHERE
+     personas.deleted_at IS NULL ');
+dd(  $datos );
 
 
 
@@ -54,5 +52,14 @@ Route::group( ['middleware' => ['auth']], function() {
     Route::get('productos/validarcodigoproducto/ejecutar', 'ProductoController@ejecutar')->name('validarcodigoproducto.ejecutar');
 
     Route::resource('carro', 'FacturaController');
+    Route::get('/all/productos_facturas', 'FacturaController@lista_producto_en_factura')->name('all.productos_facturas');//todos los productos en factura
+    Route::post('facturas/detalle/proceder', 'FacturaController@actualizar_cantidad_bd')->name('detalle.proceder');
+    Route::post('facturas/detalle/pedido', 'FacturaController@ejecutar_pedido')->name('realizar.pedido');
+
+    Route::resource('pedidos', 'FacturaDetalleController');
+    Route::get('/all/categorias', 'FacturaDetalleController@Registro_Total_Pedidos')->name('all.categorias');
+
+    Route::resource('control', 'ControlController');
+    Route::get('/all/controles', 'ControlController@Registro_Total_Controles')->name('all.controles');
 
 });

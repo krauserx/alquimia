@@ -1,5 +1,47 @@
 <?php
+use App\Factura;
 use App\FacturaDetalle;
+use App\Producto;
+function estado_factura($productoId){
+    $factura = Factura::findOrFail($productoId);
+                //validamos si esta vacio el objecto
+                $r = '';
+                  if ($factura->count()) { //validamos si el ojecto no esta vacio
+                    if($factura->f_pedido_aprobado == 3){
+                        return 'Pendiente';
+                    }elseif($factura->f_pedido_aprobado == 2){
+                        return 'Rechazado';
+                    }elseif($factura->f_pedido_aprobado == 1){
+                        return 'Aprobado';
+                    }
+                  }else{
+                    return 'Error';
+                  }
+}
+//devolvemos el nombre del producto por id
+function nombre_producto($productoId){
+    $productos = Producto::findOrFail($productoId);
+                //validamos si esta vacio el objecto
+                $r = 0;
+                  if ($productos->count()) { //validamos si el ojecto no esta vacio
+                    $r =  $productos->p_nombre;
+                  }else{
+                    $r =  0;
+                  }
+                  return $r ;
+}
+//redondear numeros formato de numero con decimales
+//redondear numeros formato de numero con decimales
+//redondear numeros formato de numero con decimales
+//redondear numeros formato de numero con decimales
+//redondear numeros formato de numero con decimales
+function redondearDosDecimal($valor, $decimales) {
+    /* $float_redondeado=round($valor * 100) / 100 + 1;
+     return $float_redondeado;*/
+     $factor = pow(10, $decimales);
+     return (round($valor*$factor)/$factor);
+  }
+//validar si exisite el produto en la factura
 function validar_existe_producto_factura($factura_id, $productoId){
     $exite_producto_fact = FacturaDetalle::where('factura_id', '=', $factura_id)
                 ->where('producto_id', '=', $productoId)->first();

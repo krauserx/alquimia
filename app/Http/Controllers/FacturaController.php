@@ -20,9 +20,179 @@ class FacturaController extends Controller
      */
     public function index()
     {
+        //validamos si hay abierto una factura
+        $datoId = Auth::user()->id;
+        $idFacturaActual = check_numerofactura_pendiente(1, 'persona_id', $datoId );
          //obtenemos la info
          return view('carro.index');
     }
+    //ejecutar pedido
+    function ejecutar_pedido(Request $request){
+        $factura = Factura::findOrFail($request['Numerofactura']);
+        // actualizamos cantidad
+        $factura->f_estado = 1;
+        $factura->update();
+        Un_Set_Factura_session();
+        echo json_encode('ok');
+
+    }
+    //actualizar cantidad en bd
+    function actualizar_cantidad_bd(Request $request){
+        $cantidad = $request['cantidad_factura'];
+        $facturadetalle = FacturaDetalle::findOrFail($request['id_rw']);
+        // actualizamos cantidad
+        $facturadetalle->fd_cantidad = $cantidad;
+        $facturadetalle->update();
+        echo json_encode('ok');
+
+    }
+      //mostrar lista de productos en la factura
+  public function lista_producto_en_factura(Request $request)
+  {
+    $idFacturaSession = session()->get('NumeroFactura');
+    $sumaTotal = 0;
+        //validar ajax
+    if ($request->ajax()) {
+        $origen = $request->get('origen');//valida si es pedidos o pos
+        $info_detalles = '
+        <div class="col-lg-8 col-xl-9">
+            <div class="card">
+                <div class="card-body">
+                  <div class="table-responsive" >
+                      <table  class="table table-striped table-bordered zero-configuration nowrap">
+                        <thead>
+                            <tr>
+                               <th><div  >Nombre Producto</div></th>
+                               <th><div  >Cantidad</div></th>
+                               <th><div  >Precio</div></th>
+                               <th><div >Total</div></th>
+                               <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+        //hacemos la consulta en la bd
+        $dataConsulta = FacturaDetalle::where('factura_id', $idFacturaSession)->get();
+        //contamos si hay datos
+        $total_row = $dataConsulta->count();
+        if($origen=='cliente'){ //validamos cual es el origen
+            //si el total_row es mayor a cero procedemos
+            if ($total_row > 0) {
+                foreach ($dataConsulta as $key => $value) {
+                    $id_row = $value['id'];
+                    $factura_id = $value['factura_id'];
+                    $producto_id = $value['producto_id'];
+                    $cantidad = $value['fd_cantidad'];
+                    $precio = $value['fd_precio_venta'];
+                    $total_linea = $cantidad * $precio;
+                    $sumaTotal += $total_linea;
+                    $info_detalles .= '
+                                    <tr>
+                                        <th>' . nombre_producto($producto_id) . '</th>
+                                        <td><div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                        <button type="button" id="restar" onclick="restarcantidad(' . $id_row . '), actualizar(' . $id_row . ')" class="btn btn-warning btn-md">
+                                        <span class="fa fa-minus"></span><span class="hidden-sm"></span></button>
+                                        </div>
+                                        <input type="text" onchange="actualizar(' . $id_row . ')" class="form-control" id="cantidad_factura_' . $id_row . '" value="' . $cantidad . '">
+                                        <div class="input-group-append">
+                                        <button type="button" id="sumar" onclick="sumarcantidad(' . $id_row . '), actualizar(' . $id_row . ')" class="btn btn-success btn-md">
+                                        <span class="fa fa-plus"></span><span class="hidden-sm"></span></button>
+                                        </div>
+                                        <input type="hidden" id="Numerofactura" value="' . $factura_id . '">
+                                        <input type="hidden" id="id_producto_factura_' . $id_row . '" value="' . $producto_id . '">
+                                        </div>
+                                        </td>
+                                        <td> ¢' . redondearDosDecimal($precio,2) . '</td>
+
+                                        <td> ¢ ' . redondearDosDecimal($total_linea,2) . '</td>
+                                        <td><button type="button" id="eliminar" onclick="deletedForm(' . $id_row . ')" class="btn btn-danger btn-md">
+                                        <span class="fa fa-trash"></span><span class="hidden-sm"></span></button></td>
+                                    </tr>';
+                  } //cierre bucle de detalles
+                  $info_detalles .= '
+            <tr> <td class="text-right" colspan=4>Total </td>
+                 <td class="text-right" colspan=4>¢ '. redondearDosDecimal($sumaTotal,2) . '</td>
+            </tr>';
+            //obtenemos info de factura
+            $factura = Factura::findOrFail($idFacturaSession);
+                              $info_detalles .= '
+                   </tbody>
+                </table>
+               </div>
+              </div>
+            </div>
+          </div>
+  <div class="col-lg-4 col-xl-3">
+      <div class="card">
+         <div class="card-body">
+            <div class="media align-items-center mb-4">
+                <div class="media-body">
+                <h4>Estado</h4>
+                <ul class="card-profile__info">
+                <li class="mb-1">
+                <strong class="text-dark mr-4">
+                <h3><code>' .
+                estado_factura($idFacturaSession) . '</code>
+                </h3>
+                </strong></li>
+               </ul>
+          </div>
+  </div>
+  <div class="row mb-5">
+          <div class="col-12 text-center">';
+          if($factura->f_estado == 2){
+              $info_detalles .= '
+              <button id="completarventa" type="button" onclick="ejecutarPedido();" class="btn btn-success px-5">Solicitar
+              </button>
+      <input type="hidden" id="monto_bd" value="">
+      <input type="hidden" id="total_factura" value="">
+      </div>
+  </div>
+
+       </div>
+     </div>
+    </div>';
+
+          }else{
+            $info_detalles .= '
+            <button  type="button"  class="btn btn-warning px-5">Sulicitud Precentada
+            </button>
+    </div>
+</div>
+
+     </div>
+   </div>
+  </div>';
+
+          }
+
+            }else{//cierre de la valdiacion si hay regsitro en la bd
+                $info_detalles = '
+   <div class="col-lg-8 col-xl-9">
+       <div class="card">
+           <div class="card-body">
+             <div class="alert alert-warning">
+                No hay datos registrados!.
+              </div>
+            </div>
+        </div>
+    </div>
+   ';
+            }
+
+        }else{// si no es pos mas opciones
+
+        }
+
+        $datar = array(
+          'detalles'  => $info_detalles,
+          'total_data'  => $total_row
+        );
+        //return Datatables::of($productos_factura)->make(true);
+        echo json_encode($datar);
+      } //cierre if
+
+  }
 
     /**
      * Show the form for creating a new resource.
@@ -247,8 +417,11 @@ class FacturaController extends Controller
      * @param  \App\Factura  $factura
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Factura $factura)
+    public function destroy($id)
     {
-        //
+        $post = FacturaDetalle::findOrFail($id);
+        $post->delete();
+
+        return $post;
     }
 }
