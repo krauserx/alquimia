@@ -17,7 +17,6 @@ class AppServiceProvider extends ServiceProvider
             return'/home4/fadurico/public_html/view_alquimia';
         });*/
     }
-
     /**
      * Bootstrap any application services.
      *
