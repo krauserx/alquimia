@@ -2,6 +2,11 @@
 use App\Factura;
 use App\FacturaDetalle;
 use App\Producto;
+//brinda el estado de la factura
+//brinda el estado de la factura
+//brinda el estado de la factura
+//brinda el estado de la factura
+//brinda el estado de la factura
 function estado_factura($productoId){
     $factura = Factura::findOrFail($productoId);
                 //validamos si esta vacio el objecto
