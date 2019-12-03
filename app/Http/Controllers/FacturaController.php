@@ -9,6 +9,11 @@ use Yajra\DataTables\DataTables;
 use Auth;
 use App\FacturaDetalle;
 use App\Producto;
+use App\BitacoraEntrega;
+use PDF;
+use App\Categoria;
+use App\FacturaPago;
+use App\MetodoPago;
 
 class FacturaController extends Controller
 {
@@ -25,6 +30,65 @@ class FacturaController extends Controller
         $idFacturaActual = check_numerofactura_pendiente(1, 'persona_id', $datoId );
          //obtenemos la info
          return view('carro.index');
+    }
+
+     //exportar a pdf
+     public function export_pdf()
+     {
+       // Fetch all customers from database
+       $data = Categoria::get();
+
+       // Send data to the view using loadView function of PDF facade
+       $pdf = PDF::loadView('pdf.customers', $data);
+       // If you want to store the generated pdf to the server then you can use the store function
+       $pdf->save(storage_path().'_filename.pdf');
+       // Finally, you can download the file using download function
+       return $pdf->download('customers.pdf');
+     }
+    //aprbar pedido  pedidos
+    function aprobar_pedido(Request $request){
+        $datoId = Auth::user()->id;
+        $factura = Factura::findOrFail($request['Numerofactura']);
+        // actualizamos
+        $fechaEntregado = '';
+        $datos = [];//array para la bitocora control de entregas
+        if($request['f_estado_entrega'] == 1){
+            $factura->f_fecha_entregado = date("Y-m-d");
+            $factura->f_fecha_a_entregar= date("Y-m-d");
+            $factura->f_estado_entrega = 1;
+            //regsitramos en bitacora
+        $datos = [
+            'usario_id'=> $datoId,
+            'factura_id'=> $request['Numerofactura'],
+            'detalle'=> 'La factura #'.$request['Numerofactura']. ' fue entregada por el usuario '.nombre_cleinte($datoId).' en la fecha '.date("Y-m-d")
+        ];
+        }else{//programamos la entrega
+            $fecha = date("Y-m-d", strtotime($request['f_fecha_a_entregar']));
+            $factura->f_fecha_a_entregar=$fecha;
+            $factura->f_estado_entrega = 2;
+            $factura->f_fecha_entregado = NULL;
+            $datos = [
+                'usario_id'=> $datoId,
+                'factura_id'=> $request['Numerofactura'],
+                'detalle'=> 'La factura #'.$request['Numerofactura']. ' fue programada para entregar en la fecha '. $fecha.' por el usuario '.nombre_cleinte($datoId)
+            ];
+        }
+        $factura->f_pedido_aprobado = 1;
+        $factura->update();
+        $info = BitacoraEntrega::create($datos);
+
+
+        echo json_encode('ok');
+
+    }
+    function rechzar_pedido(Request $request){
+        $factura = Factura::findOrFail($request['Numerofactura']);
+        // actualizamos cantidad
+        $factura->f_pedido_aprobado = 2;
+        $factura->f_estado_entrega = 0;
+        $factura->update();
+        echo json_encode('ok');
+
     }
     //ejecutar pedido
     function ejecutar_pedido(Request $request){
@@ -121,7 +185,9 @@ class FacturaController extends Controller
                </div>
               </div>
             </div>
-          </div>
+          </div>';
+          if (Auth::user()->hasRole('Cliente')){
+          $info_detalles .= '
   <div class="col-lg-4 col-xl-3">
       <div class="card">
          <div class="card-body">
@@ -163,8 +229,92 @@ class FacturaController extends Controller
      </div>
    </div>
   </div>';
-
           }
+        }else{//admin procesar pagos FacturaPagoController
+            $metodoPago = MetodoPago::all();
+            $pagos_registrados = FacturaPago::where('factura_id', '=', $idFacturaSession)->get();
+
+                    $info_detalles .= '
+                    <div class="col-lg-4 col-xl-3">
+      <div class="card">
+         <div class="card-body">
+            <div class="media align-items-center mb-4">
+                <div class="media-body">
+                    <h4>Pagos</h4>
+                           <ul class="card-profile__info">';
+                $operacion = 0;
+                $sumaBD = 0;
+                foreach ($pagos_registrados as $key) {
+                  $sumaBD += $key->fp_monto;
+                  $info_detalles .= '<li class="mb-1">
+                             <strong class="text-dark mr-4">' .
+                    metodo_pago_texto($key->metodo_pago_id) . '</strong>
+                             <span>' . $key->fp_monto . '</span></li>';
+                }
+                $info_detalles .=  '
+                              </ul>
+
+                          <h3 class="mb-0">Metodo Pago</h3>
+                      <div class="form-group col-md-12">
+                        <label>Opciones</label>
+                        <select class="form-control" id="id_metodo_pago" name="id_metodo_pago" >
+                          <option >Selecione...</option>';
+                foreach ($metodoPago as $row) {
+                  $slec = '';
+                  if ($row->id == 1) {
+                    $slec = 'selected';
+                  }
+                  $info_detalles .= '<option value="' . $row->id . '" ' . $slec . '>' . $row->mp_texto . '</option>';
+                }
+                $info_detalles .= '</select>
+                    </div>
+                </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Monto</label>';
+                if ($sumaBD == $sumaTotal) {
+                  // pago igual al total factura
+                  $info_detalles .=   '<input type="hidden" class="form-control" id="monto" name="monto">';
+                } elseif ($sumaBD > $sumaTotal) {
+                  $operacion = $sumaBD - $sumaTotal;
+                } else {
+                  // code...
+                  $operacion = $sumaTotal - $sumaBD;
+                  $info_detalles .= '<input type="text" class="form-control is-invalid" id="monto" name="monto" value="' . redondearDosDecimal($operacion,2) . '">';
+                }
+                $info_detalles .=  '
+                </div>
+              <div class="form-group col-md-6">
+                  <label>Vuelto</label>
+                  <input type="text" class="form-control" id="cambio" name="cambio" value="' . redondearDosDecimal($operacion, 2) . '" readonly >
+              </div>
+            </div>
+            <div class="col-12 text-center">';
+            if($sumaBD < $sumaTotal){
+                $info_detalles .= '
+                <button id="agregar_pagp" type="button" onclick="agregarPagosFacturas();" class="btn btn-warning px-5" >Agregar</button>
+               ';
+            }else{
+                $info_detalles .= '
+                <button id="completarventa" type="button" onclick=" ejecutarPedido()();" class="btn btn-success px-5">Completar
+                </button>
+                ';
+            }
+            $info_detalles .=  '
+            <input type="hidden" id="monto_bd" value="' . $sumaBD . '">
+            <input type="hidden" id="total_factura" value="' . $sumaTotal . '">
+            </div>
+        </div>
+
+             </div>
+           </div>
+          </div>';
+
+
+        }
 
             }else{//cierre de la valdiacion si hay regsitro en la bd
                 $info_detalles = '
@@ -193,7 +343,40 @@ class FacturaController extends Controller
       } //cierre if
 
   }
+  public function crear_metodos_pagos_facturas(Request $request)
+  {
+    $idFacturaSession = session()->get('NumeroFactura');
+    $id_metodo_pago = $request['metodo_pago'];
+    $monto_ofrecido = $request['monto_ofrecido'];
+    $nuevo_monto = 0;
+    $registro = FacturaPago::where('factura_id', '=', $idFacturaSession)
+      ->where('metodo_pago_id', '=', $id_metodo_pago)->first();
+    $id_pago_tb = 0;
+    $monto_bd = 0;
+    if ($registro) { //si objeto no esta vacio
+      $id_pago_tb = $registro->id;
+      $monto_bd = $registro->fp_monto;
+      $nuevo_monto = $monto_bd + $monto_ofrecido;
 
+      //  $update_pa = MetodoPagoFacturaPerfil::findOrFail($id_pago_tb);
+      //actualizamos metodo
+      // actualizamos cantidad
+      $registro->fp_monto = $nuevo_monto;
+      $registro->update();
+      $registrar = $registro;
+    } else {
+      // procedemos a crear datos en tb metodo_pago_factura_perfil session()->get('IdFacturaPerfil')
+      $resumen = [
+        'metodo_pago_id' => $id_metodo_pago,
+        'fp_monto' => $monto_ofrecido,
+        'fp_vuelto' => 0
+      ];
+
+      $registrar =  FacturaPago::create($resumen);
+    }
+
+    return $registrar;
+  }
     /**
      * Show the form for creating a new resource.
      *
@@ -242,25 +425,17 @@ class FacturaController extends Controller
             if($tipoVenta == 1){//pos venta hay dos modo de facturar, 1 por venta directa 2 pedidos por usuarios(cliente)
                 //Validating title and body field
              $this->validate($request, [
-            'persona_id'=>'required',
-            'textofactura_id' =>'required',
-            'condicion_id'=>'required',
-            'f_estado_entrega'=>'required',
-            'f_fecha_a_entregar'=>'required'
+            'condicion_id'=>'required'
             ]);
                 $usuarioId =Auth::user()->id;
-                $clienteId = $request['clienteId'];
-                $textoFactura = $request['textofactura_id'];
+                $clienteId = $request['persona_id'];
+                $textoFactura = '2';
                 $condicionVenta = $request['condicion_id'];
                 $diasCredito = $request['fd_dias_credito'];
                 $estadoPedido = 1;
-                $estadoEntrega = $request['f_estado_entrega'];
-                $fechaAEntregar = $request['f_fecha_a_entregar'];
-                if(date('Y-m-d', strtotime($fechaAEntregar)) == date('Y-m-d')){
-                    $fechaEntrega = date('Y-m-d');
-                }elseif(date('Y-m-d', strtotime($fechaAEntregar)) > date('Y-m-d')){
-                    $fechaEntrega = NULL;
-                }
+                $estadoEntrega = 1; //$request['f_estado_entrega'];
+                $fechaAEntregar = date("Y-m-d", strtotime(date('Y-m-d')));
+                    $fechaEntrega = date("Y-m-d", strtotime(date('Y-m-d')));
                 ///
                 $columnaAValidar = 'usario_id';//como es carro pos validamos el id del usurio vendiendo
                $datoId = $usuarioId; //pasamos el id del usaurio como vendedor

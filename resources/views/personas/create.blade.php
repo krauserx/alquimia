@@ -32,6 +32,15 @@
                             <div class="col-md-8 col-md-offset-2">
                                     <h1>Registro Persona</h1>
                                     <hr>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
                                 {{-- Using the Laravel HTML Form Collective to create our form --}}
                                     {{ Form::open(array('route' => 'personas.store', 'enctype="multipart/form-data"')) }}
@@ -59,14 +68,14 @@
                                         </div>
                                         @endforeach
                                         <br>
-                                        <div class="form-group">
+                                       <!-- <div class="form-group">
                                                 <label>Tipo de Persona</label>
                                                 <select class="form-control form-control-sm" name="tipoPersona">
                                                     <option value="1">Clinete</option>
                                                     <option value="2">Proveedor</option>
                                                 </select>
                                         </div>
-                                        <br>
+                                        <br>-->
                                         <div class="form-group">
                                                 <label>Sexo</label>
                                                 <select class="form-control form-control-sm" name="sexo">

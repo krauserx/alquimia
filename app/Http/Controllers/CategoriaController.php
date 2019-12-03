@@ -69,7 +69,10 @@ class CategoriaController extends Controller
             'c_texto'=>'required|max:60',
             'c_descripcion' =>'max:150',
             'c_url_img' =>'mimes:jpg,jpeg,png,gif',
-            ]);
+            ],
+            ['c_texto.required' => 'Categoria es requerido',
+            'c_descripcion.max' => 'Descripcion se permite mmaximo 150 caracteres',
+            'c_url_img.mimes' => 'IMG solo se permite jpg,jpeg,png,gif']);
             //validar
             DB::beginTransaction();
             $urlimg = $request['c_url_img'];
@@ -159,7 +162,10 @@ class CategoriaController extends Controller
             'c_texto'=>'required|max:60',
             'c_descripcion' =>'max:150',
             'c_url_img' =>'mimes:jpg,jpeg,png,gif',
-            ]);
+            ],
+            ['c_texto.required' => 'Categoria es requerido',
+            'c_descripcion.max:150' => 'Categoria es requerido',
+            'c_url_img.mimes' => 'IMG solo se permite jpg,jpeg,png,gif']);
             //validar
             DB::beginTransaction();
             $urlimg = $request['c_url_img'];

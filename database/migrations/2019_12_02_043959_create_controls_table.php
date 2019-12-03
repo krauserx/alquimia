@@ -17,15 +17,15 @@ class CreateControlsTable extends Migration
             $table->increments('id')->unsigned();
             $table->integer('usario_id')->unsigned();
             $table->integer('persona_id')->unsigned();//id de la perosna
-            $table->double('c_altura', 4, 2);
-            $table->double('c_peso', 5, 2);
-            $table->double('c_procentaje_grasa', 5, 2);
-            $table->double('c_grasa_viceral', 5, 2);
-            $table->double('c_cintura', 3, 2);
-            $table->double('c_pecho', 3, 2);
-            $table->double('c_cadera', 5, 2);
-            $table->double('c_brazo', 3, 2);
-            $table->double('c_imc', 5, 2);
+            $table->double('c_altura', 6, 2);
+            $table->double('c_peso', 6, 2);
+            $table->double('c_procentaje_grasa', 6, 2);
+            $table->double('c_grasa_viceral', 6, 2);
+            $table->double('c_cintura', 6, 2);
+            $table->double('c_pecho', 6, 2);
+            $table->double('c_cadera', 6, 2);
+            $table->double('c_brazo', 6, 2);
+            $table->double('c_imc', 6, 2);
             $table->integer('c_tipo')->default('1')->unsigned()->comment('1 ingreso, 2 control');
             $table->text('c_nota')->nullable();
             $table->timestamps();
@@ -33,7 +33,7 @@ class CreateControlsTable extends Migration
             //llave forenea
             //llave forenea
             $table->foreign('persona_id')
-            ->references('id')->on('personas')
+            ->references('id')->on('users')
             ->onDelete('cascade');
              //llave forenea
              $table->foreign('usario_id')

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use DB;
 use Yajra\DataTables\DataTables;
 use Auth;
-use App\Persona;
+use App\User;
 
 class ControlController extends Controller
 {
@@ -21,6 +21,53 @@ class ControlController extends Controller
          //obtenemos la info
          return view('control.index');
     }
+    //
+    //buscar usuario en la bd
+  function buscar_cliente(Request $request)
+  {
+    $q = '';
+    if ($request->ajax()) {
+      $output = '';
+      $query = $request->get('query');
+      if ($query != '') {
+        $data = User::where('name', 'like', '%' . $query . '%')
+          ->orWhere('identificacion', 'like', '%' . $query . '%')
+          ->orWhere('email', 'like', '%' . $query . '%')
+          ->where('deleted_at', 'is', 'null')//2=clientes
+          ->orderBy('id', 'desc')
+          ->get();
+        $q = $data;
+      } else {
+        $data = '';
+        $q = $data;
+      }
+      $total_row = $data->count();
+      if ($total_row > 0) {
+        foreach ($data as $row) {
+          $output .= '<div class="list-group">
+  <a  onclick="clienteSelect(' . $row->id . ')" class="list-group-item list-group-item-action">' .
+            $row->name . ' ' .  $row->identificacion . '
+<span class="badge badge-primary badge-pill">' . $row->p_codigo . '</span>
+  </a>
+  <input type="hidden" id="nombre_cliente_' . $row->id . '" value="' .
+            $row->name  . ' ' .  $row->identificacion . '">
+</div>';
+        }
+      } else {
+        $output = '
+       <div class="alert alert-warning">
+       No hay datos registrados!.
+        </div>
+       ';
+      }
+      $data = array(
+        'table_data'  => $output,
+        'total_data'  => $total_row
+      );
+
+      echo json_encode($data);
+    }
+  }
     //obtener regsitro total de la bd
     public function Registro_Total_Controles(){
 
@@ -30,17 +77,22 @@ class ControlController extends Controller
                  $datos =DB::select('SELECT *
                   FROM
                  controls
-                  INNER JOIN personas ON personas.id = controls.persona_id
                   INNER JOIN users ON users.id = controls.usario_id
                   WHERE
-                  personas.deleted_at IS NULL ');
+                  users.deleted_at IS NULL ');
                  $obj = array();
                    foreach ($datos as $key) {
+                       $tipoRegsitro = '';
+                       if($key->c_tipo == 1){
+                        $tipoRegsitro = 'Nuevo';
+                       }else{
+                        $tipoRegsitro = 'Rutina';
+                       }
 
                     $obj[] = [
                         'id'=>$key->id,
                         'usario_id'=>$key->name,
-                        'persona_id'=>$key->p_nombre,
+                        'persona_id'=>nombre_cleinte($key->persona_id),
                         'c_altura'=>$key->c_altura,
                         'c_peso' =>$key->c_peso,
                         'c_procentaje_grasa'=>$key->c_procentaje_grasa,
@@ -50,7 +102,7 @@ class ControlController extends Controller
                         'c_cadera'=>$key->c_cadera,
                         'c_brazo'=>$key->c_brazo,
                         'c_imc'=>$key->c_imc,
-                        'c_tipo'=>$key->c_tipo,
+                        'c_tipo'=>$tipoRegsitro,
                         'c_nota'=>$key->c_nota,
                         'created_at'=> date("d/m/Y", strtotime($key->created_at))
                       ];
@@ -82,7 +134,7 @@ class ControlController extends Controller
      */
     public function create()
     {
-        $query = Persona::all();//->paginate(5); //show only 5 items at a time in descending order
+        $query = User::all();//->paginate(5); //show only 5 items at a time in descending order
         return view('control.create', compact('query'));
     }
 
@@ -96,8 +148,8 @@ class ControlController extends Controller
     {
                         //Validating title and body field
             $this->validate($request, [
-                'persona_id'=>'required',
-                'c_altura'=>'required|regex:/^\d+(\.\d{1,2})?$/',
+                'usario_id'=>'required',
+                'c_altura'=>'required|max:300|regex:/^\d+(\.\d{1,2})?$/',
                 'c_peso'=>'required',
                 'c_procentaje_grasa'=>'required',
                 'c_grasa_viceral'=>'required',
@@ -107,14 +159,16 @@ class ControlController extends Controller
                 'c_brazo'=>'required',
                 'c_imc'=>'required',
                 'c_tipo'=>'required'
-                 ]);
+            ],[
+                'c_altura.regex' => 'Campo Altura no tiene el formato correcto',
+                'c_altura.max' => 'Campo Altura fuera del rango'
+            ]);
 
-                         DB::beginTransaction();
-                        try{
+
                               //aqui llenamos el array para guardar
                               $data = [
-                                'usario_id'=>Auth::user()->id,
-                                'persona_id'=>$request['persona_id'],
+                                'usario_id'=>Auth::user()->id,///este se refiere a quien esta realizando el regestro(entrenador)
+                                'persona_id'=>$request['usario_id'],//este campo se refiere al cleinte
                                 'c_altura'=>$request['c_altura'],
                                 'c_peso'=>$request['c_peso'],
                                 'c_procentaje_grasa'=>$request['c_procentaje_grasa'],
@@ -132,16 +186,11 @@ class ControlController extends Controller
                                   $control = Control::create($data);
 
 
-                   DB::commit();
                     //Display a successful message upon save
                         return redirect()->route('control.index')
                             ->with('success', 'Los datos se registraron con el #  ,
                              '. $control->id.' se han creado!');
-                            }catch(\Exception $e){
-                                DB::rollback();
-                                return redirect()->route('control.create')
-                                            ->with('warning','Something Went Wrong!');
-                            }
+
     }
 
     /**

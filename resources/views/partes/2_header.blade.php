@@ -54,7 +54,7 @@
                             <ul>
                                 <li><span>{{Auth::user()->name}}</span></li>
                                 <li>
-                                    <a href="app-profile.html"><i class="icon-user"></i> <span>Perfil</span></a>
+                                    <a href="{{ route('perfil.index')}}"><i class="icon-user"></i> <span>Mi Perfil</span></a>
                                 </li>
 
                                 <hr class="my-2">

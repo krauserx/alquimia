@@ -48,14 +48,10 @@
                                     <div class="form-group">
                                             <div class="form-row">
                                                     <div class="form-group col-md-6">
-                                                        <label>Categoria</label>
-                                                        <select class="form-control form-control-sm" name="persona_id">
-                                                                @foreach ($query as $rw)
-                                                                @php
-                                                                    echo '<option value="'.$rw->id.'">'.$rw->p_nombre.' '.$rw->p_apellido.'</option>';
-                                                                @endphp
-                                                                @endforeach
-                                                                  </select>
+                                                            <label>Usuario</label>
+                                                            <input type="text" id="buscar_persona" name="buscar_persona" value="{{old('buscar_persona')}}" class="form-control" placeholder="Ingrese el usuario a buscar">
+                                                            <div id="cleintes"></div>
+                                                    <input type="hidden" id="usario_id" name="usario_id" value="{{old('usario_id')}}">
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label>Tipo de Registro</label>
@@ -68,43 +64,43 @@
                                                 <div class="form-row">
                                                         <div class="form-group col-md-4">
                                                             <label>Altura</label>
-                                                            <input type="text" id="c_altura" {{old('c_altura')}}  name="c_altura" class="form-control" required >
+                                                            <input type="text" value="{{old('c_altura')}}"    name="c_altura" class="form-control" required >
                                                         </div>
                                                         <div class="form-group col-md-4">
                                                             <label>Peso</label>
-                                                            <input type="text"   name="c_peso" class="form-control" required>
+                                                            <input type="text"  value="{{old('c_peso')}}"  name="c_peso" class="form-control" required>
                                                         </div>
                                                         <div class="form-group col-md-4" id="div3">
                                                                 <label>Porcentaje Grasa</label>
-                                                                <input type="text" id="c_procentaje_grasa" name="c_procentaje_grasa" class="form-control" required>
+                                                                <input type="text" value="{{old('c_procentaje_grasa')}}" name="c_procentaje_grasa" class="form-control" required>
                                                             </div>
                                                     </div>
                                                     <div class="form-row">
                                                             <div class="form-group col-md-4">
                                                                 <label>Grasa Viceral</label>
-                                                                <input type="text" id="c_grasa_viceral"  name="c_grasa_viceral" class="form-control" required >
+                                                                <input type="text" value="{{old('c_grasa_viceral')}}" name="c_grasa_viceral" class="form-control" required >
                                                             </div>
                                                             <div class="form-group col-md-4">
                                                                 <label>Cintura</label>
-                                                                <input type="text"   name="c_cintura" class="form-control" required>
+                                                                <input type="text" value="{{old('c_cintura')}}"  name="c_cintura" class="form-control" required>
                                                             </div>
-                                                            <div class="form-group col-md-4" id="div3">
+                                                            <div class="form-group col-md-4" >
                                                                     <label>Pecho</label>
-                                                                    <input type="text" id="c_pecho" name="c_pecho" class="form-control" required>
+                                                                    <input type="text" value="{{old('c_pecho')}}" name="c_pecho" class="form-control" required>
                                                                 </div>
                                                         </div>
                                                         <div class="form-row">
                                                                 <div class="form-group col-md-4">
                                                                     <label>Cadera</label>
-                                                                    <input type="text" id="c_cadera"  name="c_cadera" class="form-control" required >
+                                                                    <input type="text" value="{{old('c_cadera')}}"  name="c_cadera" class="form-control" required >
                                                                 </div>
                                                                 <div class="form-group col-md-4">
                                                                     <label>Brazo</label>
-                                                                    <input type="text"   name="c_brazo" class="form-control" required>
+                                                                    <input type="text"  value="{{old('c_brazo')}}" name="c_brazo" class="form-control" required>
                                                                 </div>
                                                                 <div class="form-group col-md-4" id="div3">
                                                                         <label>IMC</label>
-                                                                        <input type="text" id="c_imc" name="c_imc" class="form-control" required>
+                                                                        <input type="text" value="{{old('c_imc')}}" name="c_imc" class="form-control" required>
                                                                     </div>
                                                             </div>
 
@@ -143,6 +139,47 @@
 <script src="{{ asset('plugins/timepicker/bootstrap-timepicker.min.js')}}"></script>
 <script src="{{ asset('plugins/bootstrap-daterangepicker/daterangepicker.js')}}"></script>
 <script src="{{ asset('js/plugins-init/form-pickers-init.js')}}"></script>
-@endsection
 
+@endsection
+@section('js_bajo_body')
+<script>
+        //cargar
+    $(document).ready(function(){
+      //buscar cleintes
+      buscar_cliente();
+      $(document).on('keyup', '#buscar_persona', function(){
+       var query = $(this).val();
+       if (query!='' ) {
+     buscar_cliente(query);
+     }else {
+       $('#cleintes').html('');
+       $('#usario_id').val('');
+     }
+      });
+
+
+    });
+    //funcion buscar clientes
+    function buscar_cliente(query = '')
+    {
+     $.ajax({
+      url:"{{ route('facturas.clientes') }}",
+      method:'GET',
+      data:{query:query},
+      dataType:'json',
+      success:function(data)
+      {
+       $('#cleintes').html(data.table_data);
+       //$('#total_records').text(data.total_data);
+     }
+    });
+    }
+    //agregar id cleinte
+    function clienteSelect(i) {
+    $('#usario_id').val(i);
+    $('#buscar_persona').val($('#nombre_cliente_'+i).val());
+    $('#cleintes').html('');
+    }
+    </script>
+@endsection
 

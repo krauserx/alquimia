@@ -86,12 +86,14 @@ class PersonaController extends Controller
                 $this->validate($request, [
                     'nombre'=>'required|max:100',
                     'apellido' =>'required|max:100',
-                    'direccion' =>'required',
-                    'tipoPersona' =>'required',
                     'sexo' =>'required',
                     'fechan' =>'required',
                     'dato_contacto' =>'required|array',
-                    ]);
+                    ],
+                    ['nombre.required' => 'Nombre es requerido',
+                    'apellido.required' => 'Apellido es requerido',
+                    'fechan.required' => 'Fecha de Naciemiento es requerido']
+                );
                     //validar
                     $arrayContacto = $request['dato_contacto'];
                     $arrayidContacto = $request['id_dato_contacto'];
@@ -103,7 +105,7 @@ class PersonaController extends Controller
                       $data = [
                           'p_nombre'=>$request['nombre'],
                           'p_apellido'=>$request['apellido'],
-                          'p_tipo_persona'=> intval($request['tipoPersona']),
+                          'p_tipo_persona'=> '2',
                           'p_sexo'=> intval($request['sexo']),
                           'p_direccion'=> $request['direccion'],
                           'p_fecha_nacimeinto'=> $newDate_fechan,
@@ -184,11 +186,13 @@ class PersonaController extends Controller
     {
         $this->validate($request, [
             'p_nombre'=>'required|max:100',
-            'p_tipo_persona'=>'required',
             'p_sexo'=>'required',
             'p_fecha_nacimeinto'=>'required',
             'dato_contacto' =>'required|array',
-        ]);
+        ],
+        ['nombre.required' => 'Nombre es requerido',
+        'apellido.required' => 'Apellido es requerido',
+        'fechan.required' => 'Fecha de Naciemiento es requerido']);
         $arrayContacto = $request['dato_contacto'];
         $arrayidContacto = $request['id_dato_contacto'];
         $arrayidCon = $request['id_contacto'];

@@ -19,7 +19,7 @@
         </ul>
     </div>
 @endif
-    {{ Form::model($user, array('route' => array('users.update', $user->id), 'method' => 'PUT')) }}{{-- Form model binding to automatically populate our fields with user data --}}
+    {{ Form::model($user, array('route' => array('perfil.update', $user->id), 'method' => 'PUT')) }}{{-- Form model binding to automatically populate our fields with user data --}}
         <div class="form-row">
                 <div class="form-group col-md-6">
                         {{ Form::label('name', 'Name') }}
@@ -82,16 +82,6 @@
                                 {{ Form::number('telefono', null, array('class' => 'form-control')) }}
                         </div>
                     </div>
-
-    <h5><b>Asigne Role</b></h5>
-
-    <div class='form-group'>
-        @foreach ($roles as $role)
-            {{ Form::checkbox('roles[]',  $role->id, $user->roles ) }}
-            {{ Form::label($role->name, ucfirst($role->name)) }}<br>
-
-        @endforeach
-    </div>
 
     <div class="form-row">
             <div class="form-group col-md-6">

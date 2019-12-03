@@ -7,7 +7,7 @@
 
 <div class='col-lg-4 col-lg-offset-4'>
 
-    <h1><i class='fa fa-key'></i> Add Permission</h1>
+    <h1><i class='fa fa-key'></i> Crear Permisos</h1>
     <br>
 
     {{ Form::open(array('url' => 'permissions')) }}
@@ -26,7 +26,7 @@
         @endforeach
     @endif
     <br>
-    {{ Form::submit('Add', array('class' => 'btn btn-primary')) }}
+    {{ Form::submit('Crear', array('class' => 'btn btn-primary')) }}
 
     {{ Form::close() }}
 

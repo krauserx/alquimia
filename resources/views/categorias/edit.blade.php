@@ -21,7 +21,15 @@
                             <div class="col-md-8 col-md-offset-2">
                                     <h1>Registro Categoria</h1>
                                     <hr>
-
+                                    @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
                                 {{-- Using the Laravel HTML Form Collective to create our form --}}
                                 {{ Form::model($post, array('route' => array('categorias.update', $post->id), 'method' => 'PUT', 'enctype="multipart/form-data"')) }}
 
@@ -38,7 +46,7 @@
 
                                         </div>
 
-                                        {{ Form::submit('Save', array('class' => 'btn btn-success btn-lg btn-block')) }}
+                                        {{ Form::submit('Actualizar', array('class' => 'btn btn-success btn-lg btn-block')) }}
                                         {{ Form::close() }}
                                     </div>
                                     </div>

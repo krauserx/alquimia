@@ -31,6 +31,15 @@
                     <div class="card-body">
                             <h1>Editar</h1>
                             <hr>
+                            @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
                                 {{ Form::model($post, array('route' => array('personas.update', $post->id), 'method' => 'PUT')) }}
                                 <div class="form-group">
                                         {{ Form::label('title', 'Nombre') }}
@@ -58,11 +67,11 @@
                                         </div>
                                         @endforeach
                                         <br>
-                                        <div class="form-group">
+                                        <!--<div class="form-group">
                                                 <label>Tipo de Persona</label>
                                                 <select class="form-control form-control-sm" name="p_tipo_persona">
                                                     @php
-                                                    if($post->p_tipo_persona == 1 ){
+                                                   /* if($post->p_tipo_persona == 1 ){
                                                        echo '
                                                        <option value="1" selected >Clinete</option>
                                                     <option value="2" >Proveedor</option>';
@@ -70,11 +79,11 @@
                                                         echo '
                                                        <option value="1"  >Clinete</option>
                                                     <option value="2" selected>Proveedor</option>';
-                                                    }
+                                                    }*/
                                                     @endphp
                                                 </select>
                                         </div>
-                                        <br>
+                                        <br>-->
                                         <div class="form-group">
                                                 <label>Sexo</label>
                                                 <select class="form-control form-control-sm" name="p_sexo" >

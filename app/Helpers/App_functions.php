@@ -2,6 +2,8 @@
 use App\Factura;
 use App\FacturaDetalle;
 use App\Producto;
+use App\User;
+use App\MetodoPago;
 //brinda el estado de la factura
 //brinda el estado de la factura
 //brinda el estado de la factura
@@ -22,6 +24,18 @@ function estado_factura($productoId){
                   }else{
                     return 'Error';
                   }
+}
+//nombre del cliente(usuario regsitrado en el sitema)
+function nombre_cleinte($id){
+    $consulta = User::findOrFail($id);
+                //validamos si esta vacio el objecto
+                $r = 0;
+                  if ($consulta->count()) { //validamos si el ojecto no esta vacio
+                    $r =  $consulta->name;
+                  }else{
+                    $r =  0;
+                  }
+                  return $r ;
 }
 //devolvemos el nombre del producto por id
 function nombre_producto($productoId){
@@ -97,7 +111,11 @@ function Set_Factura_Session($IdFacturaPerfil)
     session(['NumeroFactura' => $IdFacturaPerfil]);
     //return response()->json('ok');
 }
-
+//titpo pago
+function metodo_pago_texto($id)
+{
+    return MetodoPago::findOrFail($id)->mp_texto;
+}
 function Un_Set_Factura_session()
 {
     session()->forget('NumeroFactura');

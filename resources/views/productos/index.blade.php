@@ -14,6 +14,7 @@
                                              <h3 class="m-0 text-primary">Lista de productos</h3>
                                          </div>
                                         <div class="panel-title pull-right">
+                                                <a target="_blank" href="{{ URL::to('/crear_reporte_productos/1') }}" class="btn mb-1 btn-flat btn-warning">Export PDF</a>
                                             <a href="{{ route('productos.create')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
                                                 Nuevo Producto</a></div>
                                         <div class="clearfix"></div>

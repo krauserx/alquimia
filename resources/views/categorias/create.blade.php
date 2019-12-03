@@ -21,7 +21,15 @@
                             <div class="col-md-8 col-md-offset-2">
                                     <h1>Registro Categoria</h1>
                                     <hr>
-
+                                    @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
                                 {{-- Using the Laravel HTML Form Collective to create our form --}}
                                     {{ Form::open(array('route' => 'categorias.store', 'enctype="multipart/form-data"')) }}
 

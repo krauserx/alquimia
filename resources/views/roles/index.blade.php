@@ -16,8 +16,8 @@
             <thead>
                 <tr>
                     <th>Role</th>
-                    <th>Permissions</th>
-                    <th>Operation</th>
+                    <th>Permisos</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
 
@@ -43,7 +43,7 @@
         </table>
     </div>
 
-    <a href="{{ URL::to('roles/create') }}" class="btn btn-success">Add Role</a>
+    <a href="{{ URL::to('roles/create') }}" class="btn btn-success">Nuevo Role</a>
 
 </div>
 

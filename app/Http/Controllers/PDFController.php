@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\FacturaDetalle;
 use Illuminate\Http\Request;
-use App\Factura;
+use PDF;
+use App\FacturaDetalle;
 use Auth;
 use DB;
-use Yajra\DataTables\DataTables;
-use PDF;
+use App\Producto;
 use App\Categoria;
 
-class FacturaDetalleController extends Controller
+class PDFController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -20,15 +23,53 @@ class FacturaDetalleController extends Controller
      */
     public function index()
     {
-
-          //obtenemos la info
-          return view('pedidos.index');
+        //
     }
+    function crear_reporte_productos ($tipo){
 
+        $productos = Producto::all();
+        $obj = array();
+        foreach ($productos as $res =>$row) {
+            //validar tipo de cleinte
+            $urlimg = asset('/images/productos/').$row['c_url_img'];
+            $categoria = Categoria::findOrFail($row['categoria_id']);
+            $cate = $categoria->c_texto;
+            $tipoProd = '';
+            $cantidad = '';
+            if($row['p_tipo']==1){
+              $tipoProd = 'Servicio';
+              $cantidad = '';
+            }else{
+              $tipoProd = 'Mercaderia';
+              $cantidad = $row['p_catidad'];
+            }
+            $validarPermisos = 0;
+            if(Auth::user()->hasRole('Admin')){
+              $validarPermisos = 1;//1 indica q es admin
+            }elseif(Auth::user()->hasRole('Cliente')){
+              $validarPermisos = 2;//2 indica q es cleinte
+            }
+          $obj[] = [
+            'id'=>$row['id'],
+            'p_url_img'=>$row['p_url_img'],
+            'p_codigo'=>$row['p_codigo'],
+            'p_nombre'=>$row['p_nombre'],
+            'categoria'=>$cate,
+            'p_precio_costo'=>$row['p_precio_costo'],
+            'p_precio_venta'=>'¢ '.$row['p_precio_venta'],
+            'cantidad' => $cantidad,
+            'p_tipo'=>$tipoProd,
+            'p_descripcion'=>$row['p_descripcion'],
+            'created_at'=>date("d/m/Y", strtotime($row['created_at'])),
+            'permiso_permitido'=>$validarPermisos
+          ];
+        }
+        $vistaurl="reportes.productos";
+        return $this->crearPDF($obj , $vistaurl,$tipo, '');
 
-     //obtener regsitro total de la bd
-     public function Registro_Total_Pedidos()
-     {
+    }
+    public function crear_detallePedidos($tipo){
+        $obj[] =[];
         $datoId = Auth::user()->id;//variable q contine el id del usario logiado
         $isadmin = 0; //varibale para pasar si es admin al datable
          if(Auth::user()->hasRole('Admin')){//si es admin puede ver todos los pedidos de los usuarios
@@ -84,9 +125,20 @@ class FacturaDetalleController extends Controller
               ];
 
            }
-           return Datatables::of($obj)->make(true);
-     }
+        $vistaurl="reportes.pedidos";
+        return $this->crearPDF($obj , $vistaurl,$tipo, '');
+    }
+    public function crearPDF($datos,$vistaurl,$tipo, $fechaReporte)
+    {
+        $data = $datos;
+        $fehcaReporteSelecionado = $fechaReporte;
+        $view =  \View::make($vistaurl, compact('data', 'fehcaReporteSelecionado'))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($view)->setPaper('a4', 'landscape');
 
+        if($tipo==1){return $pdf->stream('reporte');}
+        if($tipo==2){return $pdf->download('reporte.pdf'); }
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -111,10 +163,10 @@ class FacturaDetalleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\FacturaDetalle  $facturaDetalle
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(FacturaDetalle $facturaDetalle)
+    public function show($id)
     {
         //
     }
@@ -122,10 +174,10 @@ class FacturaDetalleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\FacturaDetalle  $facturaDetalle
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(FacturaDetalle $facturaDetalle)
+    public function edit($id)
     {
         //
     }
@@ -134,10 +186,10 @@ class FacturaDetalleController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\FacturaDetalle  $facturaDetalle
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, FacturaDetalle $facturaDetalle)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -145,10 +197,10 @@ class FacturaDetalleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\FacturaDetalle  $facturaDetalle
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(FacturaDetalle $facturaDetalle)
+    public function destroy($id)
     {
         //
     }

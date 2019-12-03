@@ -61,6 +61,7 @@ class ProductoController extends Controller
           'categoria'=>$cate,
           'p_precio_costo'=>$row['p_precio_costo'],
           'p_precio_venta'=>'¢ '.$row['p_precio_venta'],
+          'venta'=>$row['p_precio_venta'],
           'cantidad' => $cantidad,
           'p_tipo'=>$tipoProd,
           'p_descripcion'=>$row['p_descripcion'],
@@ -131,7 +132,12 @@ class ProductoController extends Controller
             'categoria_id'=>'required',
             'tipoProducto'=>'required',
             'p_url_img' =>'mimes:jpg,jpeg,png,gif',
-            ]);
+            ],
+            ['p_codigo.required' => 'Codigo es requerido',
+            'p_nombre.required' => 'Nombre es requerido',
+            'categoria_id.required' => 'Categoria es requerido',
+            'tipoProducto.required' => 'Tipo de producto es requerido',
+            'p_url_img.mimes' => 'IMG solo se permite jpg,jpeg,png,gif']);
             //validar
            DB::beginTransaction();
             $urlimg = $request['p_url_img'];
@@ -235,7 +241,12 @@ class ProductoController extends Controller
             'categoria_id'=>'required',
             'tipoProducto'=>'required',
             'p_url_img' =>'mimes:jpg,jpeg,png,gif',
-            ]);
+            ],
+            ['p_codigo.required' => 'Codigo es requerido',
+            'p_nombre.required' => 'Nombre es requerido',
+            'categoria_id.required' => 'Categoria es requerido',
+            'tipoProducto.required' => 'Tipo de producto es requerido',
+            'p_url_img.mimes' => 'IMG solo se permite jpg,jpeg,png,gif']);
             //validar
            DB::beginTransaction();
             $urlimg = $request['p_url_img'];

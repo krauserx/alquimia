@@ -11,7 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 //Importing laravel-permission models
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-
+use Yajra\DataTables\DataTables;
 //Enables us to output flash messaging
 use Session;
 
@@ -28,10 +28,48 @@ class UserController extends Controller {
 
     public function index() {
         //Get all users and pass it to the view
-            $users = User::orderby('id', 'desc')->paginate(10);
-            return view('users.index')->with('users', $users);
+           // $users = User::orderby('id', 'ASC')->paginate(10);
+            return view('users.index');//->with('users', $users);
         }
+    //obtener regsitro total de la bd
+    public function Registro_Total_Usurios()
+    {
+        # code...
+        $query = User::all();
+        $obj = array();
+      foreach ($query as $res =>$row) {
+          $tipoIdentificaicon = $row['tipo_identificacion'];
+          $tipoTelefono = $row['tipo_telefono'];
+          $textoTipoIdent = '';
+          $textoTipoTele = '';
+          if( $tipoIdentificaicon == 1){
+            $textoTipoIdent = 'Cédula';
+         }else if( $tipoIdentificaicon == 2){
+            $textoTipoIdent = 'DIMEX';
+         }else{
+            $textoTipoIdent = 'Pasaporte';
+         }
+         if($tipoTelefono == 1){
+            $textoTipoTele = 'Celular';
+         }else if($tipoTelefono == 2){
+            $textoTipoTele = 'Fijo Oficina';
+         }else{
+            $textoTipoTele = 'Fijo Casa';
+         }
+        $obj[] = [
+          'id'=>$row['id'],
+          'name'=>$row['name'],
+          'tipo_identificacion'=> $textoTipoIdent,
+          'identificacion'=>$row['identificacion'],
+          'email' =>$row['email'],
+          'tipo_telefono' => $textoTipoTele,
+          'telefono' =>$row['telefono'],
+          'created_at'=>date("d/m/Y", strtotime($row['created_at']))
+        ];
+      }
+      return Datatables::of($obj)->make(true);
 
+    }
         /**
     * Show the form for creating a new resource.
     *
@@ -51,13 +89,43 @@ class UserController extends Controller {
         */
         public function store(Request $request) {
         //Validate name, email and password fields
+        /*
+name
+tipo_identificacion
+identificacion
+email
+tipo_telefono
+telefono
+password
+        */
             $this->validate($request, [
-                'name'=>'required|max:120',
+                'name'=>'required|min:3|max:120',
+                'tipo_identificacion' => 'required',
+                'identificacion' => 'required|min:7|max:20',
                 'email'=>'required|email|unique:users',
+                'tipo_telefono' => 'required',
+                'telefono' => 'required|numeric|min:8',
                 'password'=>'required|min:6|confirmed'
-            ]);
+            ],
+            ['name.required' => 'Nombre es requerido',
+            'name.max' => 'Nombre solo se permiten 120 caracteres',
+            'name.min' => 'Nombre minimo 3 caracteres',
+            'tipo_identificacion.required' => 'Tipo de Cedula es requerido',
+            'identificacion.required' => 'Identificacion es requerido',
+            'identificacion.max' => 'Identificacion maximo 20 caracteres',
+            'identificacion.min' => 'Identificacion minimo 7 caracteres',
+            'email.required' => 'Email es requerido',
+            'email.email' => 'Email no corresponde a un formato de correo valido',
+            'email.unique' => 'Email ya existe en la bd',
+            'tipo_telefono.required' => 'Tipo de Telefono es requerido',
+            'telefono.required' => 'Telefono es requerido',
+            'telefono.min' => 'Telefono minimo 8 caracteres',
+            'password.confirmed' => ' Las claves no coinciden']);
 
-            $user = User::create($request->only('email', 'name', 'password')); //Retrieving only the email and password data
+            $user = User::create($request->only(
+                'name', 'tipo_identificacion',
+                'identificacion', 'email', 'tipo_telefono',
+                'telefono', 'password')); //Retrieving only the email and password data
 
             $roles = $request['roles']; //Retrieving the roles field
         //Checking if a role was selected
@@ -109,12 +177,29 @@ class UserController extends Controller {
             $user = User::findOrFail($id); //Get role specified by id
 
         //Validate name, email and password fields
-            $this->validate($request, [
-                'name'=>'required|max:120',
-                'email'=>'required|email|unique:users,email,'.$id,
-                'password'=>'required|min:6|confirmed'
-            ]);
-            $input = $request->only(['name', 'email', 'password']); //Retreive the name, email and password fields
+        $this->validate($request, [
+            'name'=>'required|min:3|max:120',
+            'tipo_identificacion' => 'required',
+            'identificacion' => 'required|min:7|max:20',
+            'email'=>'required|email',
+            'tipo_telefono' => 'required',
+            'telefono' => 'required|numeric|min:8'
+        ],
+        ['p_codigo.name' => 'Nombre es requerido',
+        'name.max' => 'Nombre solo se permiten 120 caracteres',
+        'name.min' => 'Nombre minimo 3 caracteres',
+        'tipo_identificacion.required' => 'Tipo de Cedula es requerido',
+        'identificacion.required' => 'Identificacion es requerido',
+        'identificacion.max' => 'Identificacion maximo 20 caracteres',
+        'identificacion.min' => 'Identificacion minimo 7 caracteres',
+        'email.required' => 'Email es requerido',
+        'email.email' => 'Email no corresponde a un formato de correo valido',
+        'tipo_telefono.required' => 'Tipo de Telefono es requerido',
+        'telefono.required' => 'Telefono es requerido',
+        'telefono.min' => 'Telefono minimo 8 caracteres']);
+            $input = $request->only(['name', 'tipo_identificacion',
+            'identificacion', 'email', 'tipo_telefono',
+            'telefono', 'password']); //Retreive the name, email and password fields
             $roles = $request['roles']; //Retreive all roles
             $user->fill($input)->save();
 

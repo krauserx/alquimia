@@ -7,7 +7,13 @@
                         <i class="icon-speedometer menu-icon"></i><span class="nav-text">Dashboard</span>
                     </a>
             </li>
+            <li>
+                    <a href="{{ route('pedidos.index')}}" aria-expanded="false">
+                        <i class="fa fa-list"></i><span class="nav-text">Pedidos</span>
+                    </a>
+                </li>
             @if (Auth::user()->hasRole('Admin'))
+
 
             <li>
                     <a href="{{ route('carro.index')}}" aria-expanded="false">
@@ -46,22 +52,23 @@
                        <li><a href="{{ route('categorias.create')}}">Crear</a></li>
                      </ul>
              </li>
-            <li>
+           <!-- <li>
                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa fa-users"></i> <span class="nav-text">Contactos</span>
+                        <i class="fa fa-users"></i> <span class="nav-text">Proveedores</span>
                     </a>
                     <ul aria-expanded="false">
                       <li><a href="{{ route('personas.index')}}">Lista</a></li>
                       <li><a href="{{ route('personas.create')}}">Crear</a></li>
                     </ul>
-            </li>
+            </li>-->
             <li>
                 <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                    <i class="icon-list menu-icon"></i> <span class="nav-text">Control</span>
+                    <i class="icon-list menu-icon"></i> <span class="nav-text">Permisos</span>
                 </a>
                 <ul aria-expanded="false">
-                  <li><a href="{{ route('roles.index')}}">Roles</a></li>
-                  <li><a href="{{ route('permissions.index')}}">Permisos</a></li>
+                  <li><a href="{{ route('permissions.index')}}">Lista</a></li>
+                  <li><a href="{{ route('roles.index')}}">Rols</a></li>
+
                 </ul>
             </li>
             <li>
@@ -80,11 +87,6 @@
                         <i class="fa fa-shopping-cart"></i><span class="nav-text">Carrito</span>
                     </a>
                 </li>
-                <li>
-                        <a href="{{ route('pedidos.index')}}" aria-expanded="false">
-                            <i class="fa fa-list"></i><span class="nav-text">Mis Pedidos</span>
-                        </a>
-                    </li>
             <li>
                     <a href="{{ route('productos.index')}}" aria-expanded="false">
                         <i class="fa fa-th-large"></i><span class="nav-text">Produtos</span>
@@ -92,6 +94,7 @@
             </li>
 
             @endif
+
         </ul>
     </div>
 </div>

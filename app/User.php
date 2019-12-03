@@ -19,8 +19,17 @@ class User extends Authenticatable
      *
      * @var array
      */
+    //necesario para la columna de eliminado logico
+    use SoftDeletes;
+    protected $dates = ['deleted_at'];
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'tipo_identificacion',
+        'identificacion',
+        'email',
+        'tipo_telefono',
+        'telefono',
+        'password',
     ];
 
     /**

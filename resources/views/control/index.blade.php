@@ -11,11 +11,11 @@
                             <div class="panel panel-default">
                                     <div class="panel-heading">
                                          <div class="panel-title pull-left">
-                                             <h3 class="m-0 text-primary">Lista de personas</h3>
+                                             <h3 class="m-0 text-primary">Lista de toma de datos</h3>
                                          </div>
                                         <div class="panel-title pull-right">
-                                            <a href="{{ route('personas.create')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
-                                                Nuevo Persona</a></div>
+                                            <a href="{{ route('control.create')}}" type="button" class="btn mb-1 btn-flat btn-outline-success">
+                                                Nuevo Registro</a></div>
                                         <div class="clearfix"></div>
                                     </div>
                                 </div>
@@ -23,7 +23,6 @@
                                     <table id="info-table" class="table table-responsive table-striped table-bordered zero-configuration">
                                         <thead>
                                             <tr>
-                                                <th>#</th>
                                                 <th><div class="pull-center" >Entrenador</div></th>
                                                 <th><div class="pull-center" >Cliente</div></th>
                                                 <th><div class="pull-center" >Altura</div></th>
@@ -58,9 +57,11 @@
           processing:true,
           serverSide:true,
           responsive: true,
+  "order": [ [13, 'desc'],
+                     ],
+
           ajax: "{{route('all.controles')}}",
           columns:[
-            {data:'id'},
             {data:'usario_id'},
             {data:'persona_id'},
             {data:'c_altura'},
